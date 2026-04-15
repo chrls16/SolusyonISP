@@ -1,0 +1,61 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <color
+        name="primary">#005EB8</color>
+
+    <color
+        name="secondary">#008080</color>
+
+    <color
+        name="tertiary">#9F4300</color>
+
+    <color
+        name="neutral">#4A5568</color>
+
+    <color
+        name="page_background">#EEF2F6</color>
+
+    <color
+        name="input_background">#F3F5F9</color>
+
+    <color
+        name="white">#FFFFFF</color>
+
+    <color
+        name="primary_light">#E0ECF8</color>
+
+    <color
+        name="badge_bg">#D4E4F4</color>
+
+    <color
+        name="red_dot">#D32F2F</color>
+
+    <color
+        name="overdue_red">#C62828</color>
+
+    <color
+        name="avatar_bg_red">#FCE8E6</color>
+
+    <color
+        name="item_bg_light">#F4F7FC</color>
+
+    <color
+        name="tab_container_bg">#F3F5F9</color>
+
+    <color
+        name="calendar_text_disabled">#BDBDBD</color>
+
+    <color
+        name="event_bg_install">#EAFBF6</color>
+
+    <color
+        name="event_text_install">#00695C</color>
+
+    <color
+        name="event_bg_maint">#FFF3E0</color>
+
+    <color
+        name="event_text_maint">#BF360C</color>
+
+    <color name="calendar_text_weekend">#C62828</color>
+</resources>
