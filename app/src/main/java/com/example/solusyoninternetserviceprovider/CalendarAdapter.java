@@ -37,27 +37,32 @@ public class CalendarAdapter extends RecyclerView.Adapter<CalendarAdapter.Calend
         String dayText = daysOfMonth.get(position);
         holder.tvDayNumber.setText(dayText);
 
-        // Reset visibility and color
+        // Reset UI
         holder.eventDot.setVisibility(View.INVISIBLE);
         holder.cardDayBackground.setCardBackgroundColor(ContextCompat.getColor(holder.itemView.getContext(), android.R.color.transparent));
 
-        if (!dayText.isEmpty()) {
-            // Format the current cell date to MM/DD/YYYY to match Firebase
-            String cellDate = String.format(Locale.getDefault(), "%02d/%02d/%04d", currentMonth + 1, Integer.parseInt(dayText), currentYear);
+        // SAFETY CHECK: Only proceed if there is a number in the cell
+        if (dayText != null && !dayText.isEmpty()) {
+            try {
+                // Construct the date to match your Firebase format: M/d/yyyy
+                String cellDate = (currentMonth + 1) + "/" + dayText + "/" + currentYear;
 
-            // Check if any event falls on this date
-            for (EventSchedule event : events) {
-                if (event.getDate() != null && event.getDate().equals(cellDate)) {
-                    holder.eventDot.setVisibility(View.VISIBLE);
+                if (events != null) {
+                    for (EventSchedule event : events) {
+                        if (event.getDate() != null && event.getDate().equals(cellDate)) {
+                            holder.eventDot.setVisibility(View.VISIBLE);
 
-                    // Set dot color based on event type
-                    if ("INSTALLATION".equalsIgnoreCase(event.getEventType())) {
-                        holder.eventDot.setCardBackgroundColor(ContextCompat.getColor(holder.itemView.getContext(), R.color.event_text_install));
-                    } else if ("MAINTENANCE".equalsIgnoreCase(event.getEventType())) {
-                        holder.eventDot.setCardBackgroundColor(ContextCompat.getColor(holder.itemView.getContext(), R.color.event_text_maint));
+                            // Set colors based on type
+                            String type = event.getEventType();
+                            if (type != null && type.toUpperCase().contains("INSTALLATION")) {
+                                holder.eventDot.setCardBackgroundColor(ContextCompat.getColor(holder.itemView.getContext(), R.color.event_text_install));
+                            }
+                            break;
+                        }
                     }
-                    break; // Just show one dot per day for now
                 }
+            } catch (Exception e) {
+                // Catch any unexpected parsing errors to prevent a crash
             }
         }
     }

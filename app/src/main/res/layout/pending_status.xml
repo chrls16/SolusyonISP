@@ -3,25 +3,41 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical"
-    android:background="#f8fafc">
+    android:background="#F8FAFC"
+    android:clipChildren="false"
+    android:clipToPadding="false">
 
-    <TextView
+    <RelativeLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="PENDING APPROVAL"
-        android:textColor="#1C1C1C"
-        android:textSize="20sp"
-        android:textStyle="bold"
-        android:padding="20dp"
-        android:background="@color/white"
-        android:elevation="4dp"/>
+        android:padding="12dp"> <ImageView
+        android:id="@+id/id_btnBack"
+        android:layout_width="48dp"
+        android:layout_height="48dp"
+        android:padding="10dp"
+        android:src="@drawable/ic_chevron_left"
+        android:layout_centerVertical="true"
+        android:contentDescription="Navigate back to subscriber management"
+        android:background="?attr/selectableItemBackgroundBorderless"
+        android:clickable="true"
+        android:focusable="true"/>
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Pending Setups"
+            android:textSize="22sp"
+            android:fontFamily="sans-serif-black"
+            android:textColor="#0F172A"
+            android:layout_centerInParent="true"/>
+    </RelativeLayout>
 
     <androidx.recyclerview.widget.RecyclerView
-        android:id="@+id/recyclerViewPending"
+        android:id="@+id/rvPendingRequests"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
+        android:paddingHorizontal="16dp"
         android:clipToPadding="false"
-        android:paddingTop="8dp"
-        android:paddingBottom="20dp"/>
+        android:paddingBottom="32dp"/>
 
 </LinearLayout>

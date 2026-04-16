@@ -29,6 +29,7 @@ import java.util.Calendar;
 import java.util.List;
 import java.util.Locale;
 
+
 public class DashboardFragment extends Fragment {
 
     // Top UI
@@ -66,6 +67,15 @@ public class DashboardFragment extends Fragment {
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
 
+        // --- NEW CODE: SHOW THE NAV BAR ---
+        if (isAdded() && getActivity() != null) {
+            View bottomNav = getActivity().findViewById(R.id.bottomNavigation);
+            if (bottomNav != null) {
+                bottomNav.setVisibility(View.VISIBLE);
+            }
+        }
+        // ----------------------------------
+
         // 1. Initialize DB
         FirebaseDatabase database = FirebaseDatabase.getInstance("https://solusyon-isp-default-rtdb.asia-southeast1.firebasedatabase.app");
         paymentRef = database.getReference("PaymentDue/Late");
@@ -83,8 +93,8 @@ public class DashboardFragment extends Fragment {
         eventList = new ArrayList<>();
         paymentList = new ArrayList<>();
 
-        // 4. Calendar Logic (Now it's safe to call this because eventList exists)
-        calendar = Calendar.getInstance(); // Sets to today's date
+        // 4. Calendar Logic
+        calendar = Calendar.getInstance();
         setupCalendarGrid();
 
         btnPrevMonth.setOnClickListener(v -> {
@@ -113,30 +123,28 @@ public class DashboardFragment extends Fragment {
     }
 
     private void setupCalendarGrid() {
-        // Format title (e.g., "April 2026")
+        // SAFETY CHECK: If fragment is detached, stop to prevent requireContext() crash
+        if (!isAdded() || getContext() == null) return;
+
         SimpleDateFormat sdf = new SimpleDateFormat("MMMM yyyy", Locale.getDefault());
         tvCurrentMonthYear.setText(sdf.format(calendar.getTime()));
 
         List<String> daysInMonth = new ArrayList<>();
-
-        // Find out what day of the week the 1st falls on
         Calendar calcCal = (Calendar) calendar.clone();
         calcCal.set(Calendar.DAY_OF_MONTH, 1);
-        int firstDayOfWeek = calcCal.get(Calendar.DAY_OF_WEEK) - 1; // 0 = Sunday
+        int firstDayOfWeek = calcCal.get(Calendar.DAY_OF_WEEK) - 1;
         int daysInTotal = calcCal.getActualMaximum(Calendar.DAY_OF_MONTH);
 
-        // Add empty spaces before the 1st of the month
         for (int i = 0; i < firstDayOfWeek; i++) {
             daysInMonth.add("");
         }
 
-        // Add the actual days
         for (int i = 1; i <= daysInTotal; i++) {
             daysInMonth.add(String.valueOf(i));
         }
 
-        // Set adapter using 7 columns
-        rvCalendarGrid.setLayoutManager(new GridLayoutManager(requireContext(), 7));
+        // Use getContext() instead of requireContext() inside setup
+        rvCalendarGrid.setLayoutManager(new GridLayoutManager(getContext(), 7));
         CalendarAdapter calendarAdapter = new CalendarAdapter(daysInMonth, eventList, calendar.get(Calendar.MONTH), calendar.get(Calendar.YEAR));
         rvCalendarGrid.setAdapter(calendarAdapter);
     }
@@ -145,13 +153,19 @@ public class DashboardFragment extends Fragment {
         eventRef.addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot snapshot) {
+                // SAFETY CHECK: Ensure fragment is still attached before updating UI
+                if (!isAdded()) return;
+
                 eventList.clear();
                 for (DataSnapshot ds : snapshot.getChildren()) {
                     EventSchedule event = ds.getValue(EventSchedule.class);
                     if (event != null) eventList.add(event);
                 }
-                eventAdapter.notifyDataSetChanged();
-                setupCalendarGrid(); // Refresh calendar to draw dots based on new data!
+
+                if (eventAdapter != null) {
+                    eventAdapter.notifyDataSetChanged();
+                }
+                setupCalendarGrid();
             }
             @Override public void onCancelled(@NonNull DatabaseError error) {}
         });
@@ -161,12 +175,18 @@ public class DashboardFragment extends Fragment {
         paymentRef.addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot snapshot) {
+                // SAFETY CHECK: Ensure fragment is still attached
+                if (!isAdded()) return;
+
                 paymentList.clear();
                 for (DataSnapshot ds : snapshot.getChildren()) {
                     PaymentDue payment = ds.getValue(PaymentDue.class);
                     if (payment != null) paymentList.add(payment);
                 }
-                paymentAdapter.notifyDataSetChanged();
+
+                if (paymentAdapter != null) {
+                    paymentAdapter.notifyDataSetChanged();
+                }
             }
             @Override public void onCancelled(@NonNull DatabaseError error) {}
         });
