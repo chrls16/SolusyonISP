@@ -47,6 +47,12 @@ public class LoginFragment extends Fragment {
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
 
+        // Hide the Bottom Navigation Bar on the Login Screen
+        View bottomNav = requireActivity().findViewById(R.id.bottomNavigation);
+        if (bottomNav != null) {
+            bottomNav.setVisibility(View.GONE);
+        }
+
         // Initialize Firebase Auth
         mAuth = FirebaseAuth.getInstance();
 
