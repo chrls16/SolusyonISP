@@ -21,6 +21,13 @@ public class EventAdapter extends RecyclerView.Adapter<EventAdapter.EventViewHol
         this.eventList = eventList;
     }
 
+    // --- NEW METHOD: UPDATE LIST FOR FILTERING ---
+    public void updateList(List<EventSchedule> newList) {
+        this.eventList = newList;
+        notifyDataSetChanged();
+    }
+    // ---------------------------------------------
+
     @NonNull
     @Override
     public EventViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
@@ -32,6 +39,9 @@ public class EventAdapter extends RecyclerView.Adapter<EventAdapter.EventViewHol
     public void onBindViewHolder(@NonNull EventViewHolder holder, int position) {
         EventSchedule event = eventList.get(position);
 
+        // Safety check for null event data
+        if (event == null) return;
+
         holder.tvEventType.setText(event.getEventType());
         holder.tvEventTitle.setText(event.getAddress());
 
@@ -40,12 +50,14 @@ public class EventAdapter extends RecyclerView.Adapter<EventAdapter.EventViewHol
         String eventTime = event.getTime() != null ? event.getTime() : "No Time";
         holder.tvEventTime.setText(eventDate + " • " + eventTime);
 
-        // Set Colors
-        if ("INSTALLATION".equalsIgnoreCase(event.getEventType())) {
+        // Set Colors based on event type
+        String type = event.getEventType() != null ? event.getEventType() : "";
+
+        if (type.toUpperCase().contains("INSTALLATION")) {
             holder.cardEventContainer.setCardBackgroundColor(ContextCompat.getColor(holder.itemView.getContext(), R.color.event_bg_install));
             holder.dotIndicator.setCardBackgroundColor(ContextCompat.getColor(holder.itemView.getContext(), R.color.event_text_install));
             holder.tvEventType.setTextColor(ContextCompat.getColor(holder.itemView.getContext(), R.color.event_text_install));
-        } else if ("MAINTENANCE".equalsIgnoreCase(event.getEventType())) {
+        } else if (type.toUpperCase().contains("MAINTENANCE")) {
             holder.cardEventContainer.setCardBackgroundColor(ContextCompat.getColor(holder.itemView.getContext(), R.color.event_bg_maint));
             holder.dotIndicator.setCardBackgroundColor(ContextCompat.getColor(holder.itemView.getContext(), R.color.event_text_maint));
             holder.tvEventType.setTextColor(ContextCompat.getColor(holder.itemView.getContext(), R.color.event_text_maint));
@@ -54,7 +66,7 @@ public class EventAdapter extends RecyclerView.Adapter<EventAdapter.EventViewHol
 
     @Override
     public int getItemCount() {
-        return eventList.size();
+        return eventList != null ? eventList.size() : 0;
     }
 
     public static class EventViewHolder extends RecyclerView.ViewHolder {

@@ -1,6 +1,5 @@
 package com.example.solusyoninternetserviceprovider;
 
-
 import android.graphics.Color;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -54,13 +53,6 @@ public class SubscriberAdapter extends RecyclerView.Adapter<SubscriberAdapter.Vi
             holder.tvAccountStatus.setBackgroundColor(Color.parseColor("#E9ECEF"));
             holder.vStatusDot.setVisibility(View.GONE);
         }
-
-        // Setup Button Clicks (Optional)
-        /*
-        holder.btnEditProfile.setOnClickListener(v -> {
-            // Edit profile logic
-        });
-        */
     }
 
     @Override
@@ -73,7 +65,6 @@ public class SubscriberAdapter extends RecyclerView.Adapter<SubscriberAdapter.Vi
         TextView tvPlanTag, tvPackageTier, tvSpeed, tvBilling;
         TextView tvEmail, tvPhone, tvAddress;
         View vStatusDot;
-        View btnEditProfile, btnNotify; // Defined as View since we aren't clicking them in adapter yet
 
         public ViewHolder(@NonNull View itemView) {
             super(itemView);
@@ -83,8 +74,6 @@ public class SubscriberAdapter extends RecyclerView.Adapter<SubscriberAdapter.Vi
             tvAccountStatus = itemView.findViewById(R.id.tvAccountStatus);
             tvLocationCity = itemView.findViewById(R.id.tvLocationCity);
             vStatusDot = itemView.findViewById(R.id.vStatusDot);
-            btnEditProfile = itemView.findViewById(R.id.btnEditProfile);
-            btnNotify = itemView.findViewById(R.id.btnNotify);
 
             // Plan Card
             tvPlanTag = itemView.findViewById(R.id.tvPlanTag);

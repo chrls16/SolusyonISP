@@ -45,7 +45,8 @@ public class DashboardFragment extends Fragment {
     // Events
     private RecyclerView rvEvents;
     private EventAdapter eventAdapter;
-    private List<EventSchedule> eventList;
+    private List<EventSchedule> eventList; // Master list from Firebase
+    private List<EventSchedule> displayedEvents; // List currently shown in RecyclerView
 
     // Calendar
     private RecyclerView rvCalendarGrid;
@@ -74,7 +75,6 @@ public class DashboardFragment extends Fragment {
                 bottomNav.setVisibility(View.VISIBLE);
             }
         }
-        // ----------------------------------
 
         // 1. Initialize DB
         FirebaseDatabase database = FirebaseDatabase.getInstance("https://solusyon-isp-default-rtdb.asia-southeast1.firebasedatabase.app");
@@ -89,8 +89,9 @@ public class DashboardFragment extends Fragment {
         rvEvents = view.findViewById(R.id.rvEvents);
         rvPaymentsDue = view.findViewById(R.id.rvPaymentsDue);
 
-        // 3. CRITICAL FIX: Initialize the empty lists FIRST!
+        // 3. Initialize Lists
         eventList = new ArrayList<>();
+        displayedEvents = new ArrayList<>(); // Start with an empty list for the UI
         paymentList = new ArrayList<>();
 
         // 4. Calendar Logic
@@ -107,9 +108,9 @@ public class DashboardFragment extends Fragment {
             setupCalendarGrid();
         });
 
-        // 5. Event List Setup
+        // 5. Event List Setup - Use displayedEvents (empty) instead of eventList (master)
         rvEvents.setLayoutManager(new LinearLayoutManager(requireContext()));
-        eventAdapter = new EventAdapter(eventList);
+        eventAdapter = new EventAdapter(displayedEvents);
         rvEvents.setAdapter(eventAdapter);
 
         // 6. Payments List Setup
@@ -117,13 +118,32 @@ public class DashboardFragment extends Fragment {
         paymentAdapter = new PaymentDueAdapter(paymentList);
         rvPaymentsDue.setAdapter(paymentAdapter);
 
-        // 7. Fetch Data from Firebase
+        // 7. Fetch Data
         fetchPaymentsData();
         fetchEventsData();
     }
 
+    // --- NEW METHOD: FILTER EVENTS BY DATE ---
+    public void filterEvents(String selectedDate) {
+        if (!isAdded() || eventList == null) return;
+
+        displayedEvents.clear();
+        for (EventSchedule event : eventList) {
+            if (event.getDate() != null && event.getDate().equals(selectedDate)) {
+                displayedEvents.add(event);
+            }
+        }
+
+        if (eventAdapter != null) {
+            eventAdapter.notifyDataSetChanged();
+        }
+
+        if (displayedEvents.isEmpty()) {
+            Toast.makeText(getContext(), "No appointments for " + selectedDate, Toast.LENGTH_SHORT).show();
+        }
+    }
+
     private void setupCalendarGrid() {
-        // SAFETY CHECK: If fragment is detached, stop to prevent requireContext() crash
         if (!isAdded() || getContext() == null) return;
 
         SimpleDateFormat sdf = new SimpleDateFormat("MMMM yyyy", Locale.getDefault());
@@ -138,14 +158,14 @@ public class DashboardFragment extends Fragment {
         for (int i = 0; i < firstDayOfWeek; i++) {
             daysInMonth.add("");
         }
-
         for (int i = 1; i <= daysInTotal; i++) {
             daysInMonth.add(String.valueOf(i));
         }
 
-        // Use getContext() instead of requireContext() inside setup
         rvCalendarGrid.setLayoutManager(new GridLayoutManager(getContext(), 7));
-        CalendarAdapter calendarAdapter = new CalendarAdapter(daysInMonth, eventList, calendar.get(Calendar.MONTH), calendar.get(Calendar.YEAR));
+        // Pass 'this' so the CalendarAdapter can call filterEvents()
+        CalendarAdapter calendarAdapter = new CalendarAdapter(daysInMonth, eventList,
+                calendar.get(Calendar.MONTH), calendar.get(Calendar.YEAR), this);
         rvCalendarGrid.setAdapter(calendarAdapter);
     }
 
@@ -153,7 +173,6 @@ public class DashboardFragment extends Fragment {
         eventRef.addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot snapshot) {
-                // SAFETY CHECK: Ensure fragment is still attached before updating UI
                 if (!isAdded()) return;
 
                 eventList.clear();
@@ -162,9 +181,8 @@ public class DashboardFragment extends Fragment {
                     if (event != null) eventList.add(event);
                 }
 
-                if (eventAdapter != null) {
-                    eventAdapter.notifyDataSetChanged();
-                }
+                // Do NOT notify eventAdapter here so the list stays hidden
+                // until a date is clicked. Only refresh the calendar dots.
                 setupCalendarGrid();
             }
             @Override public void onCancelled(@NonNull DatabaseError error) {}
@@ -175,18 +193,13 @@ public class DashboardFragment extends Fragment {
         paymentRef.addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot snapshot) {
-                // SAFETY CHECK: Ensure fragment is still attached
                 if (!isAdded()) return;
-
                 paymentList.clear();
                 for (DataSnapshot ds : snapshot.getChildren()) {
                     PaymentDue payment = ds.getValue(PaymentDue.class);
                     if (payment != null) paymentList.add(payment);
                 }
-
-                if (paymentAdapter != null) {
-                    paymentAdapter.notifyDataSetChanged();
-                }
+                if (paymentAdapter != null) paymentAdapter.notifyDataSetChanged();
             }
             @Override public void onCancelled(@NonNull DatabaseError error) {}
         });

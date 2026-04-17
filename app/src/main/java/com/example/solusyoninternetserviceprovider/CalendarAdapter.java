@@ -9,7 +9,6 @@ import androidx.core.content.ContextCompat;
 import androidx.recyclerview.widget.RecyclerView;
 import com.google.android.material.card.MaterialCardView;
 import java.util.List;
-import java.util.Locale;
 
 public class CalendarAdapter extends RecyclerView.Adapter<CalendarAdapter.CalendarViewHolder> {
 
@@ -17,12 +16,15 @@ public class CalendarAdapter extends RecyclerView.Adapter<CalendarAdapter.Calend
     private final List<EventSchedule> events;
     private final int currentMonth;
     private final int currentYear;
+    // --- ADDED: Reference to the fragment for filtering ---
+    private final DashboardFragment fragment;
 
-    public CalendarAdapter(List<String> daysOfMonth, List<EventSchedule> events, int month, int year) {
+    public CalendarAdapter(List<String> daysOfMonth, List<EventSchedule> events, int month, int year, DashboardFragment fragment) {
         this.daysOfMonth = daysOfMonth;
         this.events = events;
         this.currentMonth = month;
         this.currentYear = year;
+        this.fragment = fragment;
     }
 
     @NonNull
@@ -37,33 +39,46 @@ public class CalendarAdapter extends RecyclerView.Adapter<CalendarAdapter.Calend
         String dayText = daysOfMonth.get(position);
         holder.tvDayNumber.setText(dayText);
 
-        // Reset UI
+        // Reset UI to prevent "ghost" dots when scrolling
         holder.eventDot.setVisibility(View.INVISIBLE);
         holder.cardDayBackground.setCardBackgroundColor(ContextCompat.getColor(holder.itemView.getContext(), android.R.color.transparent));
 
-        // SAFETY CHECK: Only proceed if there is a number in the cell
         if (dayText != null && !dayText.isEmpty()) {
-            try {
-                // Construct the date to match your Firebase format: M/d/yyyy
-                String cellDate = (currentMonth + 1) + "/" + dayText + "/" + currentYear;
+            // Construct the date key: M/d/yyyy
+            String cellDate = (currentMonth + 1) + "/" + dayText + "/" + currentYear;
 
+            // --- NEW: Click Listener to filter the bottom list ---
+            holder.itemView.setOnClickListener(v -> {
+                if (fragment != null) {
+                    fragment.filterEvents(cellDate);
+                }
+            });
+
+            // Dot Indicator Logic
+            try {
                 if (events != null) {
                     for (EventSchedule event : events) {
                         if (event.getDate() != null && event.getDate().equals(cellDate)) {
                             holder.eventDot.setVisibility(View.VISIBLE);
 
-                            // Set colors based on type
                             String type = event.getEventType();
-                            if (type != null && type.toUpperCase().contains("INSTALLATION")) {
-                                holder.eventDot.setCardBackgroundColor(ContextCompat.getColor(holder.itemView.getContext(), R.color.event_text_install));
+                            if (type != null) {
+                                if (type.toUpperCase().contains("INSTALLATION")) {
+                                    holder.eventDot.setCardBackgroundColor(ContextCompat.getColor(holder.itemView.getContext(), R.color.event_text_install));
+                                } else if (type.toUpperCase().contains("MAINTENANCE")) {
+                                    holder.eventDot.setCardBackgroundColor(ContextCompat.getColor(holder.itemView.getContext(), R.color.event_text_maint));
+                                }
                             }
                             break;
                         }
                     }
                 }
             } catch (Exception e) {
-                // Catch any unexpected parsing errors to prevent a crash
+                // Prevent crashes from data sync issues
             }
+        } else {
+            // Disable clicks for empty cells (padding days)
+            holder.itemView.setOnClickListener(null);
         }
     }
 
