@@ -33,10 +33,10 @@ public class MainActivity extends AppCompatActivity {
             } else if (itemId == R.id.nav_subscribers) {
                 selectedFragment = new SubscriberManagement();
             } else if (itemId == R.id.nav_billing) {
-                //selectedFragment = new BillingFragment(); // Uncomment when you build this
+                selectedFragment = new BillingFragment(); // Uncomment when you build this
                 return true;
             } else if (itemId == R.id.nav_reports) {
-                // selectedFragment = new ReportsFragment(); // Uncomment when you build this
+                selectedFragment = new ReportsFragment(); // Uncomment when you build this
                 return true;
             }
 

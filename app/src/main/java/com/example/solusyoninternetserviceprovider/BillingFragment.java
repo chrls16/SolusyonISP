@@ -1,0 +1,37 @@
+package com.example.solusyoninternetserviceprovider;
+
+import android.os.Bundle;
+import android.view.LayoutInflater;
+import android.view.View;
+import android.view.ViewGroup;
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
+import androidx.fragment.app.Fragment;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
+import java.util.ArrayList;
+import java.util.List;
+
+public class BillingFragment extends Fragment {
+
+    private RecyclerView rvBilling;
+    private BillingAdapter adapter;
+    private List<BillingModel> billingList;
+
+    @Nullable
+    @Override
+    public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
+        View view = inflater.inflate(R.layout.fragment_billing, container, false);
+
+        rvBilling = view.findViewById(R.id.rvBilling);
+        rvBilling.setLayoutManager(new LinearLayoutManager(getContext()));
+
+        billingList = new ArrayList<>();
+        // You will add your Firebase fetching logic here later!
+
+        adapter = new BillingAdapter(billingList);
+        rvBilling.setAdapter(adapter);
+
+        return view;
+    }
+}

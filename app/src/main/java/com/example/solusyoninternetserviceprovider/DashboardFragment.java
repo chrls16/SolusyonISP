@@ -29,33 +29,24 @@ import java.util.Calendar;
 import java.util.List;
 import java.util.Locale;
 
-
 public class DashboardFragment extends Fragment {
 
-    // Top UI
-    private ImageView ivMenu, ivNotifications;
-    private MaterialButton btnDispatch, btnViewList;
-    private LinearLayout spinnerMonth;
+    private TextView tvCurrentMonthYear;
+    private ImageView btnPrevMonth, btnNextMonth;
+    private RecyclerView rvCalendarGrid, rvEvents, rvPaymentsDue;
 
-    // Payments
-    private RecyclerView rvPaymentsDue;
     private PaymentDueAdapter paymentAdapter;
     private List<PaymentDue> paymentList;
 
-    // Events
-    private RecyclerView rvEvents;
     private EventAdapter eventAdapter;
-    private List<EventSchedule> eventList; // Master list from Firebase
-    private List<EventSchedule> displayedEvents; // List currently shown in RecyclerView
+    private List<EventSchedule> eventList;
+    private List<EventSchedule> displayedEvents;
 
-    // Calendar
-    private RecyclerView rvCalendarGrid;
-    private TextView tvCurrentMonthYear;
-    private ImageView btnPrevMonth, btnNextMonth;
     private Calendar calendar;
-
-    // Database
     private DatabaseReference paymentRef, eventRef;
+
+    // Store listeners so we can remove them when the fragment is destroyed
+    private ValueEventListener eventListener, paymentListener;
 
     public DashboardFragment() {}
 
@@ -68,15 +59,13 @@ public class DashboardFragment extends Fragment {
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
 
-        // --- NEW CODE: SHOW THE NAV BAR ---
-        if (isAdded() && getActivity() != null) {
+        // Safety check for BottomNav
+        if (getActivity() != null) {
             View bottomNav = getActivity().findViewById(R.id.bottomNavigation);
-            if (bottomNav != null) {
-                bottomNav.setVisibility(View.VISIBLE);
-            }
+            if (bottomNav != null) bottomNav.setVisibility(View.VISIBLE);
         }
 
-        // 1. Initialize DB
+        // 1. Initialize DB with correct Instance URL
         FirebaseDatabase database = FirebaseDatabase.getInstance("https://solusyon-isp-default-rtdb.asia-southeast1.firebasedatabase.app");
         paymentRef = database.getReference("PaymentDue/Late");
         eventRef = database.getReference("EventSchedule/Upcoming");
@@ -91,10 +80,10 @@ public class DashboardFragment extends Fragment {
 
         // 3. Initialize Lists
         eventList = new ArrayList<>();
-        displayedEvents = new ArrayList<>(); // Start with an empty list for the UI
+        displayedEvents = new ArrayList<>();
         paymentList = new ArrayList<>();
 
-        // 4. Calendar Logic
+        // 4. Calendar Setup
         calendar = Calendar.getInstance();
         setupCalendarGrid();
 
@@ -108,22 +97,22 @@ public class DashboardFragment extends Fragment {
             setupCalendarGrid();
         });
 
-        // 5. Event List Setup - Use displayedEvents (empty) instead of eventList (master)
-        rvEvents.setLayoutManager(new LinearLayoutManager(requireContext()));
-        eventAdapter = new EventAdapter(displayedEvents);
-        rvEvents.setAdapter(eventAdapter);
+        // 5. Adapters Setup - FIXED: Use getContext() instead of requireContext() to avoid crashes
+        if (getContext() != null) {
+            rvEvents.setLayoutManager(new LinearLayoutManager(getContext()));
+            eventAdapter = new EventAdapter(displayedEvents);
+            rvEvents.setAdapter(eventAdapter);
 
-        // 6. Payments List Setup
-        rvPaymentsDue.setLayoutManager(new LinearLayoutManager(requireContext()));
-        paymentAdapter = new PaymentDueAdapter(paymentList);
-        rvPaymentsDue.setAdapter(paymentAdapter);
+            rvPaymentsDue.setLayoutManager(new LinearLayoutManager(getContext()));
+            paymentAdapter = new PaymentDueAdapter(paymentList);
+            rvPaymentsDue.setAdapter(paymentAdapter);
+        }
 
-        // 7. Fetch Data
+        // 6. Fetch Data
         fetchPaymentsData();
         fetchEventsData();
     }
 
-    // --- NEW METHOD: FILTER EVENTS BY DATE ---
     public void filterEvents(String selectedDate) {
         if (!isAdded() || eventList == null) return;
 
@@ -138,7 +127,7 @@ public class DashboardFragment extends Fragment {
             eventAdapter.notifyDataSetChanged();
         }
 
-        if (displayedEvents.isEmpty()) {
+        if (displayedEvents.isEmpty() && getContext() != null) {
             Toast.makeText(getContext(), "No appointments for " + selectedDate, Toast.LENGTH_SHORT).show();
         }
     }
@@ -155,42 +144,34 @@ public class DashboardFragment extends Fragment {
         int firstDayOfWeek = calcCal.get(Calendar.DAY_OF_WEEK) - 1;
         int daysInTotal = calcCal.getActualMaximum(Calendar.DAY_OF_MONTH);
 
-        for (int i = 0; i < firstDayOfWeek; i++) {
-            daysInMonth.add("");
-        }
-        for (int i = 1; i <= daysInTotal; i++) {
-            daysInMonth.add(String.valueOf(i));
-        }
+        for (int i = 0; i < firstDayOfWeek; i++) daysInMonth.add("");
+        for (int i = 1; i <= daysInTotal; i++) daysInMonth.add(String.valueOf(i));
 
         rvCalendarGrid.setLayoutManager(new GridLayoutManager(getContext(), 7));
-        // Pass 'this' so the CalendarAdapter can call filterEvents()
         CalendarAdapter calendarAdapter = new CalendarAdapter(daysInMonth, eventList,
                 calendar.get(Calendar.MONTH), calendar.get(Calendar.YEAR), this);
         rvCalendarGrid.setAdapter(calendarAdapter);
     }
 
     private void fetchEventsData() {
-        eventRef.addValueEventListener(new ValueEventListener() {
+        eventListener = new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot snapshot) {
                 if (!isAdded()) return;
-
                 eventList.clear();
                 for (DataSnapshot ds : snapshot.getChildren()) {
                     EventSchedule event = ds.getValue(EventSchedule.class);
                     if (event != null) eventList.add(event);
                 }
-
-                // Do NOT notify eventAdapter here so the list stays hidden
-                // until a date is clicked. Only refresh the calendar dots.
                 setupCalendarGrid();
             }
             @Override public void onCancelled(@NonNull DatabaseError error) {}
-        });
+        };
+        eventRef.addValueEventListener(eventListener);
     }
 
     private void fetchPaymentsData() {
-        paymentRef.addValueEventListener(new ValueEventListener() {
+        paymentListener = new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot snapshot) {
                 if (!isAdded()) return;
@@ -202,6 +183,15 @@ public class DashboardFragment extends Fragment {
                 if (paymentAdapter != null) paymentAdapter.notifyDataSetChanged();
             }
             @Override public void onCancelled(@NonNull DatabaseError error) {}
-        });
+        };
+        paymentRef.addValueEventListener(paymentListener);
+    }
+
+    @Override
+    public void onDestroyView() {
+        super.onDestroyView();
+        // Remove listeners to prevent memory leaks and crashes after fragment is gone
+        if (eventRef != null && eventListener != null) eventRef.removeEventListener(eventListener);
+        if (paymentRef != null && paymentListener != null) paymentRef.removeEventListener(paymentListener);
     }
 }
