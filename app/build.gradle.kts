@@ -55,4 +55,6 @@ dependencies {
 
     // Add the dependency for the Realtime Database library
     implementation("com.google.firebase:firebase-database")
+
+    implementation("com.github.PhilJay:MPAndroidChart:v3.1.0")
 }
