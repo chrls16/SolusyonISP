@@ -1,20 +1,29 @@
 package com.example.solusyoninternetserviceprovider;
 
 public class BillingModel {
-    private String invoiceNo;
-    private String date;
-    private String amount;
-    private String status;
+    private String name, accountNo, planName, planSpeed, planType, status;
 
-    public BillingModel(String invoiceNo, String date, String amount, String status) {
-        this.invoiceNo = invoiceNo;
-        this.date = date;
-        this.amount = amount;
+    public BillingModel() {} // Required for Firebase
+
+    public BillingModel(String name, String accountNo, String planName, String planSpeed, String planType, String status) {
+        this.name = name;
+        this.accountNo = accountNo;
+        this.planName = planName;
+        this.planSpeed = planSpeed;
+        this.planType = planType;
         this.status = status;
     }
 
-    public String getInvoiceNo() { return invoiceNo; }
-    public String getDate() { return date; }
-    public String getAmount() { return amount; }
+    public String getName() { return name; }
+    public String getAccountNo() { return accountNo; }
+    public String getPlanName() { return planName; }
+    public String getPlanSpeed() { return planSpeed; }
+    public String getPlanType() { return planType; }
     public String getStatus() { return status; }
+
+    public String getInitials() {
+        if (name == null || name.isEmpty()) return "";
+        String[] parts = name.split(" ");
+        return (parts.length > 1) ? (parts[0].substring(0, 1) + parts[1].substring(0, 1)).toUpperCase() : name.substring(0, 1).toUpperCase();
+    }
 }

@@ -1,0 +1,185 @@
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/white"
+    android:fillViewport="true">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:padding="20dp">
+
+        <com.google.android.material.card.MaterialCardView
+            android:layout_width="match_parent"
+            android:layout_height="180dp"
+            app:cardCornerRadius="24dp"
+            app:cardElevation="0dp">
+            <FrameLayout android:layout_width="match_parent" android:layout_height="match_parent">
+                <ImageView
+                    android:layout_width="match_parent" android:layout_height="match_parent"
+                    android:src="@drawable/banner" android:scaleType="centerCrop" />
+                <LinearLayout
+                    android:layout_width="match_parent" android:layout_height="match_parent"
+                    android:background="#80000000" android:padding="24dp" android:gravity="bottom" android:orientation="vertical">
+                    <TextView android:layout_width="wrap_content" android:layout_height="wrap_content"
+                        android:text="WELCOME TO SOLUSYON" android:textColor="@color/white" android:textSize="12sp" android:letterSpacing="0.1"/>
+                    <TextView android:layout_width="wrap_content" android:layout_height="wrap_content"
+                        android:text="Start Your\nConnectivity Journey" android:textColor="@color/white" android:textSize="24sp" android:textStyle="bold" />
+                </LinearLayout>
+            </FrameLayout>
+        </com.google.android.material.card.MaterialCardView>
+
+        <TextView android:layout_width="wrap_content" android:layout_height="wrap_content"
+            android:text="Personal Information" android:textSize="18sp" android:textStyle="bold" android:layout_marginTop="32dp" android:textColor="#0F172A"/>
+
+        <TextView android:layout_width="wrap_content" android:layout_height="wrap_content"
+            android:text="LAST NAME" android:textSize="11sp" android:textStyle="bold" android:textColor="#2D62B5" android:layout_marginTop="16dp" android:layout_marginStart="16dp"/>
+        <EditText android:id="@+id/etLastName" android:layout_width="match_parent" android:layout_height="60dp"
+            android:layout_marginTop="4dp" android:background="@drawable/bg_input_field" android:hint="e.g. Dela Cruz"
+            android:paddingHorizontal="20dp" android:inputType="textCapWords" android:textColorHint="#CBD5E1" android:textSize="15sp"/>
+
+        <LinearLayout android:layout_width="match_parent" android:layout_height="wrap_content" android:orientation="horizontal" android:layout_marginTop="12dp">
+            <LinearLayout android:layout_width="0dp" android:layout_height="wrap_content" android:layout_weight="1" android:orientation="vertical" android:layout_marginEnd="8dp">
+                <TextView android:layout_width="wrap_content" android:layout_height="wrap_content"
+                    android:text="FIRST NAME" android:textSize="11sp" android:textStyle="bold" android:textColor="#2D62B5" android:layout_marginStart="16dp"/>
+                <EditText android:id="@+id/etFirstName" android:layout_width="match_parent" android:layout_height="60dp"
+                    android:layout_marginTop="4dp" android:background="@drawable/bg_input_field" android:hint="Juan"
+                    android:paddingHorizontal="20dp" android:inputType="textCapWords" android:textColorHint="#CBD5E1" android:textSize="15sp"/>
+            </LinearLayout>
+            <LinearLayout android:layout_width="0dp" android:layout_height="wrap_content" android:layout_weight="1" android:orientation="vertical">
+                <TextView android:layout_width="wrap_content" android:layout_height="wrap_content"
+                    android:text="MIDDLE NAME" android:textSize="11sp" android:textStyle="bold" android:textColor="#2D62B5" android:layout_marginStart="16dp"/>
+                <EditText android:id="@+id/etMiddleName" android:layout_width="match_parent" android:layout_height="60dp"
+                    android:layout_marginTop="4dp" android:background="@drawable/bg_input_field" android:hint="Santos"
+                    android:paddingHorizontal="20dp" android:inputType="textCapWords" android:textColorHint="#CBD5E1" android:textSize="15sp"/>
+            </LinearLayout>
+        </LinearLayout>
+
+        <TextView android:layout_width="wrap_content" android:layout_height="wrap_content"
+            android:text="PHONE NUMBER" android:textSize="11sp" android:textStyle="bold" android:textColor="#2D62B5" android:layout_marginTop="12dp" android:layout_marginStart="16dp"/>
+        <EditText android:id="@+id/etPhone" android:layout_width="match_parent" android:layout_height="60dp"
+            android:layout_marginTop="4dp" android:background="@drawable/bg_input_field" android:hint="09 XXXXXXXXX"
+            android:paddingHorizontal="20dp" android:inputType="phone" android:maxLength="11" android:textColorHint="#CBD5E1" android:textSize="15sp"/>
+
+        <TextView android:layout_width="wrap_content" android:layout_height="wrap_content"
+            android:text="Service Address" android:textSize="18sp" android:textStyle="bold" android:layout_marginTop="32dp" android:textColor="#0F172A"/>
+
+        <LinearLayout android:layout_width="match_parent" android:layout_height="wrap_content" android:orientation="horizontal" android:layout_marginTop="16dp">
+            <LinearLayout android:layout_width="0dp" android:layout_height="wrap_content" android:layout_weight="1" android:orientation="vertical" android:layout_marginEnd="8dp">
+                <TextView android:layout_width="wrap_content" android:layout_height="wrap_content"
+                    android:text="PROVINCE" android:textSize="11sp" android:textStyle="bold" android:textColor="#2D62B5" android:layout_marginStart="16dp"/>
+                <TextView android:layout_width="match_parent" android:layout_height="60dp"
+                    android:layout_marginTop="4dp" android:background="@drawable/bg_input_field" android:text="Camarines Norte" android:gravity="center_vertical"
+                    android:paddingHorizontal="20dp" android:textColor="#0F172A" android:textSize="15sp"/>
+            </LinearLayout>
+            <LinearLayout android:layout_width="0dp" android:layout_height="wrap_content" android:layout_weight="1" android:orientation="vertical">
+                <TextView android:layout_width="wrap_content" android:layout_height="wrap_content"
+                    android:text="MUNICIPALITY" android:textSize="11sp" android:textStyle="bold" android:textColor="#2D62B5" android:layout_marginStart="16dp"/>
+                <TextView android:layout_width="match_parent" android:layout_height="60dp"
+                    android:layout_marginTop="4dp" android:background="@drawable/bg_input_field" android:text="Paracale" android:gravity="center_vertical"
+                    android:paddingHorizontal="20dp" android:textColor="#0F172A" android:textSize="15sp"/>
+            </LinearLayout>
+        </LinearLayout>
+
+        <TextView android:layout_width="wrap_content" android:layout_height="wrap_content"
+            android:text="BARANGAY" android:textSize="11sp" android:textStyle="bold" android:textColor="#2D62B5" android:layout_marginTop="12dp" android:layout_marginStart="16dp"/>
+        <Spinner android:id="@+id/spBarangay" android:layout_width="match_parent" android:layout_height="60dp"
+            android:layout_marginTop="4dp" android:background="@drawable/bg_input_field" android:paddingHorizontal="12dp"/>
+
+        <LinearLayout android:layout_width="match_parent" android:layout_height="wrap_content" android:orientation="horizontal" android:layout_marginTop="12dp">
+            <LinearLayout android:layout_width="0dp" android:layout_height="wrap_content" android:layout_weight="1" android:orientation="vertical" android:layout_marginEnd="8dp">
+                <TextView android:layout_width="wrap_content" android:layout_height="wrap_content"
+                    android:text="PUROK" android:textSize="11sp" android:textStyle="bold" android:textColor="#2D62B5" android:layout_marginStart="16dp"/>
+                <EditText android:id="@+id/etPurok" android:layout_width="match_parent" android:layout_height="60dp"
+                    android:layout_marginTop="4dp" android:background="@drawable/bg_input_field" android:hint="1-7"
+                    android:paddingHorizontal="20dp" android:inputType="text" android:textColorHint="#CBD5E1" android:textSize="15sp"/>
+            </LinearLayout>
+            <LinearLayout android:layout_width="0dp" android:layout_height="wrap_content" android:layout_weight="2.5" android:orientation="vertical">
+                <TextView android:layout_width="wrap_content" android:layout_height="wrap_content"
+                    android:text="LANDMARK" android:textSize="11sp" android:textStyle="bold" android:textColor="#2D62B5" android:layout_marginStart="16dp"/>
+                <EditText android:id="@+id/etLandmark" android:layout_width="match_parent" android:layout_height="60dp"
+                    android:layout_marginTop="4dp" android:background="@drawable/bg_input_field" android:hint="Near Elementary School"
+                    android:paddingHorizontal="20dp" android:inputType="text" android:textColorHint="#CBD5E1" android:textSize="15sp"/>
+            </LinearLayout>
+        </LinearLayout>
+
+        <LinearLayout android:layout_width="match_parent" android:layout_height="wrap_content" android:orientation="horizontal" android:layout_marginTop="32dp" android:gravity="center_vertical">
+            <View android:layout_width="4dp" android:layout_height="24dp" android:background="#2D62B5" />
+            <TextView android:layout_width="wrap_content" android:layout_height="wrap_content"
+                android:text="Service Details" android:textSize="22sp" android:textStyle="bold" android:layout_marginStart="12dp" android:textColor="#0F172A"/>
+        </LinearLayout>
+
+        <TextView android:layout_width="wrap_content" android:layout_height="wrap_content"
+            android:text="SELECT PLAN TYPE" android:textSize="11sp" android:textStyle="bold" android:textColor="#2D62B5" android:layout_marginTop="24dp" android:layout_marginStart="4dp"/>
+
+        <LinearLayout android:layout_width="match_parent" android:layout_height="wrap_content" android:orientation="vertical" android:layout_marginTop="16dp">
+            <com.google.android.material.card.MaterialCardView android:id="@+id/planBasic" android:layout_width="match_parent" android:layout_height="wrap_content"
+                app:cardCornerRadius="24dp" app:cardElevation="0dp" android:layout_marginBottom="12dp" app:cardBackgroundColor="#F3F5F9">
+                <LinearLayout android:layout_width="match_parent" android:layout_height="wrap_content" android:padding="20dp" android:orientation="vertical">
+                    <TextView android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="Basic P499" android:textStyle="bold" android:textColor="#0F172A" android:textSize="16sp"/>
+                    <TextView android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="Up to 25 Mbps" android:textColor="#64748B" android:textSize="12sp"/>
+                </LinearLayout>
+            </com.google.android.material.card.MaterialCardView>
+
+            <com.google.android.material.card.MaterialCardView android:id="@+id/planStandard" android:layout_width="match_parent" android:layout_height="wrap_content"
+                app:cardCornerRadius="24dp" app:cardElevation="0dp" android:layout_marginBottom="12dp" app:cardBackgroundColor="#F3F5F9" app:strokeColor="#2D62B5" app:strokeWidth="2dp">
+                <RelativeLayout android:layout_width="match_parent" android:layout_height="wrap_content" android:padding="20dp">
+                    <LinearLayout android:layout_width="wrap_content" android:layout_height="wrap_content" android:orientation="vertical">
+                        <TextView android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="Standard P699" android:textStyle="bold" android:textColor="#0F172A" android:textSize="16sp"/>
+                        <TextView android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="Up to 50 Mbps" android:textColor="#64748B" android:textSize="12sp"/>
+                    </LinearLayout>
+                    <TextView android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="POPULAR" android:background="@drawable/bg_badge" android:paddingHorizontal="12dp" android:paddingVertical="4dp" android:textColor="#2D62B5" android:textSize="10sp" android:textStyle="bold" android:layout_alignParentEnd="true" android:layout_centerVertical="true"/>
+                </RelativeLayout>
+            </com.google.android.material.card.MaterialCardView>
+
+            <com.google.android.material.card.MaterialCardView android:id="@+id/planPro" android:layout_width="match_parent" android:layout_height="wrap_content"
+                app:cardCornerRadius="24dp" app:cardElevation="0dp" app:cardBackgroundColor="#F3F5F9">
+                <LinearLayout android:layout_width="match_parent" android:layout_height="wrap_content" android:padding="20dp" android:orientation="vertical">
+                    <TextView android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="Pro P999" android:textStyle="bold" android:textColor="#0F172A" android:textSize="16sp"/>
+                    <TextView android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="Up to 100 Mbps + Fiber Ready" android:textColor="#64748B" android:textSize="12sp"/>
+                </LinearLayout>
+            </com.google.android.material.card.MaterialCardView>
+        </LinearLayout>
+
+        <TextView android:layout_width="wrap_content" android:layout_height="wrap_content"
+            android:text="PAYMENT MODE" android:textSize="11sp" android:textStyle="bold" android:textColor="#2D62B5" android:layout_marginTop="32dp" android:layout_marginStart="4dp"/>
+
+        <GridLayout android:layout_width="match_parent" android:layout_height="wrap_content" android:columnCount="2" android:layout_marginTop="16dp">
+            <com.google.android.material.card.MaterialCardView android:layout_width="0dp" android:layout_height="100dp" android:layout_columnWeight="1" android:layout_margin="4dp" app:cardCornerRadius="24dp" app:cardElevation="0dp" app:cardBackgroundColor="#F3F5F9">
+                <LinearLayout android:layout_width="match_parent" android:layout_height="match_parent" android:gravity="center" android:orientation="vertical">
+                    <ImageView android:layout_width="24dp" android:layout_height="24dp" android:src="@drawable/ic_wallet" app:tint="#2D62B5"/>
+                    <TextView android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="Gcash" android:layout_marginTop="8dp" android:textStyle="bold" android:textColor="#0F172A"/>
+                </LinearLayout>
+            </com.google.android.material.card.MaterialCardView>
+            <com.google.android.material.card.MaterialCardView android:layout_width="0dp" android:layout_height="100dp" android:layout_columnWeight="1" android:layout_margin="4dp" app:cardCornerRadius="24dp" app:cardElevation="0dp" app:cardBackgroundColor="#F3F5F9">
+                <LinearLayout android:layout_width="match_parent" android:layout_height="match_parent" android:gravity="center" android:orientation="vertical">
+                    <ImageView android:layout_width="24dp" android:layout_height="24dp" android:src="@drawable/ic_maya" app:tint="#2D62B5"/>
+                    <TextView android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="Maya" android:layout_marginTop="8dp" android:textStyle="bold" android:textColor="#0F172A"/>
+                </LinearLayout>
+            </com.google.android.material.card.MaterialCardView>
+            <com.google.android.material.card.MaterialCardView android:layout_width="0dp" android:layout_height="100dp" android:layout_columnWeight="1" android:layout_margin="4dp" app:cardCornerRadius="24dp" app:cardElevation="0dp" app:cardBackgroundColor="#F3F5F9">
+                <LinearLayout android:layout_width="match_parent" android:layout_height="match_parent" android:gravity="center" android:orientation="vertical">
+                    <ImageView android:layout_width="24dp" android:layout_height="24dp" android:src="@drawable/ic_bank" app:tint="#2D62B5"/>
+                    <TextView android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="Bank Transfer" android:layout_marginTop="8dp" android:textStyle="bold" android:textColor="#0F172A"/>
+                </LinearLayout>
+            </com.google.android.material.card.MaterialCardView>
+            <com.google.android.material.card.MaterialCardView android:layout_width="0dp" android:layout_height="100dp" android:layout_columnWeight="1" android:layout_margin="4dp" app:cardCornerRadius="24dp" app:cardElevation="0dp" app:cardBackgroundColor="#F3F5F9" app:strokeColor="#2D62B5" app:strokeWidth="2dp">
+                <LinearLayout android:layout_width="match_parent" android:layout_height="match_parent" android:gravity="center" android:orientation="vertical">
+                    <ImageView android:layout_width="24dp" android:layout_height="24dp" android:src="@drawable/ic_tools" app:tint="#2D62B5"/>
+                    <TextView android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="Cash on Install" android:layout_marginTop="8dp" android:textStyle="bold" android:textColor="#0F172A"/>
+                </LinearLayout>
+            </com.google.android.material.card.MaterialCardView>
+        </GridLayout>
+
+        <Button android:id="@+id/btnProceed" android:layout_width="match_parent" android:layout_height="65dp"
+            android:layout_marginTop="40dp" android:backgroundTint="#2D62B5" android:text="Proceed to Terms and Condition  →"
+            android:textAllCaps="false" app:cornerRadius="32dp" android:textSize="16sp" android:textStyle="bold"/>
+
+        <TextView android:layout_width="match_parent" android:layout_height="wrap_content"
+            android:text="By clicking proceed, you acknowledge that all information\nprovided is accurate and you are ready to review the\nservice agreement."
+            android:gravity="center" android:textSize="12sp" android:textColor="#64748B" android:layout_marginTop="16dp" android:layout_marginBottom="40dp"/>
+
+    </LinearLayout>
+</ScrollView>

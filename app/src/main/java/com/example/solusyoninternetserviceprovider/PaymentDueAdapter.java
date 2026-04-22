@@ -4,53 +4,51 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
-
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
-
 import java.util.List;
 
-public class PaymentDueAdapter extends RecyclerView.Adapter<PaymentDueAdapter.PaymentViewHolder> {
+public class PaymentDueAdapter extends RecyclerView.Adapter<PaymentDueAdapter.ViewHolder> {
 
-    private List<PaymentDue> paymentList;
+    private List<PaymentDue> paymentDueList;
 
-    public PaymentDueAdapter(List<PaymentDue> paymentList) {
-        this.paymentList = paymentList;
+    public PaymentDueAdapter(List<PaymentDue> paymentDueList) {
+        this.paymentDueList = paymentDueList;
     }
 
     @NonNull
     @Override
-    public PaymentViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
+    public ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
         View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.item_payment_due, parent, false);
-        return new PaymentViewHolder(view);
+        return new ViewHolder(view);
     }
 
     @Override
-    public void onBindViewHolder(@NonNull PaymentViewHolder holder, int position) {
-        PaymentDue payment = paymentList.get(position);
+    public void onBindViewHolder(@NonNull ViewHolder holder, int position) {
+        PaymentDue data = paymentDueList.get(position);
 
-        holder.tvAvatar.setText(payment.getAvatarInitials());
-        holder.tvName.setText(payment.getName());
-        holder.tvAccountDetails.setText(payment.getAccountDetails());
-        holder.tvAmount.setText(payment.getAmount());
-        holder.tvOverdueStatus.setText(payment.getOverdueStatus());
+        holder.tvName.setText(data.getName());
+        holder.tvAccount.setText(data.getAccountNo());
+        holder.tvAmount.setText(data.getAmount());
+        holder.tvDate.setText(data.getDueDate());
+        holder.tvInitials.setText(data.getInitials());
     }
 
     @Override
     public int getItemCount() {
-        return paymentList.size();
+        return paymentDueList.size();
     }
 
-    public static class PaymentViewHolder extends RecyclerView.ViewHolder {
-        TextView tvAvatar, tvName, tvAccountDetails, tvAmount, tvOverdueStatus;
+    public static class ViewHolder extends RecyclerView.ViewHolder {
+        TextView tvName, tvAccount, tvAmount, tvDate, tvInitials;
 
-        public PaymentViewHolder(@NonNull View itemView) {
+        public ViewHolder(@NonNull View itemView) {
             super(itemView);
-            tvAvatar = itemView.findViewById(R.id.tvAvatar);
-            tvName = itemView.findViewById(R.id.tvName);
-            tvAccountDetails = itemView.findViewById(R.id.tvAccountDetails);
-            tvAmount = itemView.findViewById(R.id.tvAmount);
-            tvOverdueStatus = itemView.findViewById(R.id.tvOverdueStatus);
+            tvName = itemView.findViewById(R.id.tvDueName);
+            tvAccount = itemView.findViewById(R.id.tvDueAccount);
+            tvAmount = itemView.findViewById(R.id.tvDueAmount);
+            tvDate = itemView.findViewById(R.id.tvDueDate);
+            tvInitials = itemView.findViewById(R.id.tvDueInitials);
         }
     }
 }

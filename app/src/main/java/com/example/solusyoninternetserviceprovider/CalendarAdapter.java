@@ -94,6 +94,7 @@ public class CalendarAdapter extends RecyclerView.Adapter<CalendarAdapter.Calend
             tvDayNumber = itemView.findViewById(R.id.tvDayNumber);
             cardDayBackground = itemView.findViewById(R.id.cardDayBackground);
             eventDot = itemView.findViewById(R.id.eventDot);
+
         }
     }
 }

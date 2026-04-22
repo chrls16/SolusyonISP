@@ -1,0 +1,108 @@
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="#FAFAFA">
+
+    <ScrollView
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_above="@id/bottomNavContainer"
+        android:clipToPadding="false"
+        android:padding="24dp">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical">
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Legal\nFramework"
+                android:textColor="#2D62B5"
+                android:textSize="36sp"
+                android:textStyle="bold"
+                android:lineHeight="42sp" />
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="8dp"
+                android:layout_marginBottom="32dp"
+                android:text="VERSION 2.4.0 • UPDATED OCT 2023"
+                android:textColor="#64748B"
+                android:textSize="12sp"
+                android:letterSpacing="0.1"
+                android:textStyle="bold" />
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:background="@drawable/bg_legal_card"
+                android:orientation="horizontal"
+                android:layout_marginBottom="20dp">
+                <View android:layout_width="6dp" android:layout_height="match_parent" android:background="#2D62B5" />
+                <LinearLayout android:layout_width="match_parent" android:layout_height="wrap_content" android:orientation="vertical" android:padding="24dp">
+                    <TextView android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="1. Service Scope" android:textColor="#2D62B5" android:textSize="20sp" android:textStyle="bold" />
+                    <TextView android:layout_width="match_parent" android:layout_height="wrap_content" android:layout_marginTop="12dp" android:text="SOLUSYON provides integrated digital infrastructure services designed for enterprise-grade scalability. By accessing our platform, you acknowledge that services are provided on an 'as-available' basis subject to regional maintenance protocols." android:textColor="#64748B" android:textSize="15sp" android:lineSpacingExtra="4dp" />
+                </LinearLayout>
+            </LinearLayout>
+
+            <LinearLayout
+                android:layout_width="match_parent" android:layout_height="wrap_content"
+                android:background="@drawable/bg_legal_card" android:orientation="vertical"
+                android:padding="24dp" android:layout_marginBottom="20dp">
+                <TextView android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="2. Data Sovereignty" android:textColor="#2D62B5" android:textSize="20sp" android:textStyle="bold" />
+                <TextView android:layout_width="match_parent" android:layout_height="wrap_content" android:layout_marginTop="12dp" android:text="Our architectural integrity relies on secure data handling. We maintain end-to-end encryption for all telemetry data. You retain ownership of your primary data clusters while granting SOLUSYON the right to process non-identifiable technical metadata." android:textColor="#64748B" android:textSize="15sp" android:lineSpacingExtra="4dp" />
+            </LinearLayout>
+
+            <LinearLayout
+                android:layout_width="match_parent" android:layout_height="wrap_content"
+                android:background="@drawable/bg_legal_card" android:orientation="vertical"
+                android:padding="24dp" android:layout_marginBottom="20dp">
+                <TextView android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="3. Acceptable Use" android:textColor="#2D62B5" android:textSize="20sp" android:textStyle="bold" />
+                <TextView android:layout_width="match_parent" android:layout_height="wrap_content" android:layout_marginTop="12dp" android:text="System integrity is paramount. Users are strictly prohibited from reverse-engineering core binaries or deploying automated scraping modules that exceed 500 requests per millisecond without prior written architectural approval." android:textColor="#64748B" android:textSize="15sp" android:lineSpacingExtra="4dp" />
+            </LinearLayout>
+
+            <LinearLayout
+                android:layout_width="match_parent" android:layout_height="wrap_content"
+                android:background="@drawable/bg_legal_card" android:orientation="vertical"
+                android:padding="24dp" android:layout_marginBottom="20dp">
+                <TextView android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="4. Financial Terms" android:textColor="#2D62B5" android:textSize="20sp" android:textStyle="bold" />
+                <TextView android:layout_width="match_parent" android:layout_height="wrap_content" android:layout_marginTop="12dp" android:text="Billing cycles are calculated on the 1st of each calendar month. Late processing of node-allocation fees may result in temporary bandwidth throttling to protect the stability of the shared ecosystem." android:textColor="#64748B" android:textSize="15sp" android:lineSpacingExtra="4dp" />
+            </LinearLayout>
+
+            <LinearLayout
+                android:layout_width="match_parent" android:layout_height="wrap_content"
+                android:background="@drawable/bg_legal_card" android:orientation="vertical"
+                android:padding="24dp" android:layout_marginBottom="20dp">
+                <TextView android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="5. Liability Limits" android:textColor="#2D62B5" android:textSize="20sp" android:textStyle="bold" />
+                <TextView android:layout_width="match_parent" android:layout_height="wrap_content" android:layout_marginTop="12dp" android:text="SOLUSYON shall not be liable for any indirect, incidental, or consequential damages resulting from upstream carrier fluctuations or unscheduled planetary-scale network anomalies beyond our control." android:textColor="#64748B" android:textSize="15sp" android:lineSpacingExtra="4dp" />
+            </LinearLayout>
+
+            <LinearLayout
+                android:layout_width="match_parent" android:layout_height="wrap_content"
+                android:background="@drawable/bg_checkbox_container" android:orientation="horizontal"
+                android:padding="24dp" android:gravity="center_vertical" android:layout_marginBottom="40dp">
+                <CheckBox android:id="@+id/cbAgree" android:layout_width="32dp" android:layout_height="32dp" android:buttonTint="#2D62B5" android:scaleX="1.2" android:scaleY="1.2" />
+                <TextView android:layout_width="match_parent" android:layout_height="wrap_content" android:layout_marginStart="12dp" android:text="I have meticulously reviewed the Terms and Conditions and agree to abide by the architectural guidelines of SOLUSYON." android:textColor="#475569" android:textSize="14sp" android:textStyle="bold" android:lineSpacingExtra="2dp" />
+            </LinearLayout>
+
+        </LinearLayout>
+    </ScrollView>
+
+    <LinearLayout
+        android:id="@+id/bottomNavContainer"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_alignParentBottom="true"
+        android:background="@color/white"
+        android:orientation="horizontal"
+        android:padding="20dp"
+        android:elevation="8dp">
+        <Button android:id="@+id/btnBack" android:layout_width="0dp" android:layout_height="65dp" android:layout_weight="1" android:layout_marginEnd="8dp" android:backgroundTint="#F1F5F9" android:text="BACK" android:textColor="#2D62B5" android:textStyle="bold" app:cornerRadius="16dp" />
+        <Button android:id="@+id/btnAgreeSubmit" android:layout_width="0dp" android:layout_height="65dp" android:layout_weight="1.5" android:layout_marginStart="8dp" android:backgroundTint="#2D62B5" android:text="AGREE AND SUBMIT" android:textColor="@color/white" android:textStyle="bold" app:cornerRadius="16dp" />
+    </LinearLayout>
+
+</RelativeLayout>

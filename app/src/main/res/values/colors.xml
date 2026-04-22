@@ -58,4 +58,6 @@
         name="event_text_maint">#BF360C</color>
 
     <color name="calendar_text_weekend">#C62828</color>
+
+    <color name="tab_text_inactive">#475569</color>
 </resources>
