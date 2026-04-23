@@ -1,63 +1,54 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <color
-        name="primary">#005EB8</color>
+    <color name="primary">#005EB8</color>
+    <color name="primary_light">#E0ECF8</color>
+    <color name="secondary">#008080</color>
+    <color name="tertiary">#9F4300</color>
+    <color name="badge_bg">#D4E4F4</color>
 
-    <color
-        name="secondary">#008080</color>
+    <color name="white">#FFFFFF</color>
+    <color name="page_background">#F8FAFC</color>
+    <color name="input_background">#F3F5F9</color>
+    <color name="item_bg_light">#F4F7FC</color>
+    <color name="tab_container_bg">#F3F5F9</color>
+    <color name="neutral">#4A5568</color>
+    <color name="tab_text_inactive">#475569</color>
 
-    <color
-        name="tertiary">#9F4300</color>
+    <color name="event_bg_install">#EAFBF6</color> <color name="event_text_install">#00695C</color>
+    <color name="green_dark">#1B4332</color>
 
-    <color
-        name="neutral">#4A5568</color>
+    <color name="yellow_light">#FFFBEB</color>
+    <color name="event_bg_maint">#FFF3E0</color>
+    <color name="event_text_maint">#BF360C</color>
+    <color name="yellow_dark">#92400E</color>
 
-    <color
-        name="page_background">#F8FAFC</color>
+    <color name="red_light">#FEF2F2</color>
+    <color name="red_dot">#D32F2F</color>
+    <color name="overdue_red">#C62828</color>
+    <color name="avatar_bg_red">#FCE8E6</color>
+    <color name="red_dark">#991B1B</color>
 
-    <color
-        name="input_background">#F3F5F9</color>
+    <color name="shield_blue">#2D62B5</color>
 
-    <color
-        name="white">#FFFFFF</color>
-
-    <color
-        name="primary_light">#E0ECF8</color>
-
-    <color
-        name="badge_bg">#D4E4F4</color>
-
-    <color
-        name="red_dot">#D32F2F</color>
-
-    <color
-        name="overdue_red">#C62828</color>
-
-    <color
-        name="avatar_bg_red">#FCE8E6</color>
-
-    <color
-        name="item_bg_light">#F4F7FC</color>
-
-    <color
-        name="tab_container_bg">#F3F5F9</color>
-
-    <color
-        name="calendar_text_disabled">#BDBDBD</color>
-
-    <color
-        name="event_bg_install">#EAFBF6</color>
-
-    <color
-        name="event_text_install">#00695C</color>
-
-    <color
-        name="event_bg_maint">#FFF3E0</color>
-
-    <color
-        name="event_text_maint">#BF360C</color>
-
+    <color name="calendar_text_disabled">#BDBDBD</color>
     <color name="calendar_text_weekend">#C62828</color>
 
-    <color name="tab_text_inactive">#475569</color>
+    <color name="input_label">#64748B</color>
+    <color name="security_section_bg">#F1F5F9</color>
+
+    <color name="blue_icon_bg">#E0ECF8</color>
+
+
+    <color name="overdue_bg">#FCE8E6</color>
+    <color name="overdue_text_title">#601410</color>
+    <color name="overdue_btn">#B9392F</color>
+    <color name="billing_card_bg">#041E32</color>
+    <color name="unpaid_red">#B9392F</color>
+    <color name="paid_blue">#2D62B5</color>
+
+    <color name="dashboard_blue_start">#2D62B5</color>
+    <color name="dashboard_blue_end">#1E3A8A</color>
+    <color name="transaction_success_bg">#DCFCE7</color>
+
+    <color name="text_main">#0F172A</color>
 </resources>

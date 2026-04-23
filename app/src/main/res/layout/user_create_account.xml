@@ -1,0 +1,108 @@
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="#F8FAFC"
+    android:fillViewport="true">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:padding="24dp">
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Create Your Account"
+            android:textColor="#334155"
+            android:textSize="32sp"
+            android:textStyle="bold" />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="8dp"
+            android:text="Final step to activate your high-speed fiber connection."
+            android:textColor="#64748B"
+            android:textSize="16sp" />
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="32dp"
+            android:gravity="center_vertical"
+            android:orientation="horizontal">
+
+            <ImageView
+                android:layout_width="36dp"
+                android:layout_height="36dp"
+                android:background="@drawable/bg_icon_blue_light"
+                android:padding="8dp"
+                android:src="@drawable/ic_person"
+                app:tint="@color/shield_blue" />
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="12dp"
+                android:text="Personal Information"
+                android:textColor="#0F172A"
+                android:textSize="18sp"
+                android:textStyle="bold" />
+        </LinearLayout>
+
+        <TextView android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="Full Name" android:textSize="12sp" android:textColor="@color/input_label" android:layout_marginTop="20dp" android:layout_marginStart="4dp" android:textStyle="bold"/>
+        <EditText android:id="@+id/regFullName" android:layout_width="match_parent" android:layout_height="60dp" android:layout_marginTop="4dp" android:background="@drawable/bg_white_rounded" android:paddingHorizontal="16dp" android:text="Juan Dela Cruz" android:textColor="#0F172A"/>
+
+        <TextView android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="Email" android:textSize="12sp" android:textColor="@color/input_label" android:layout_marginTop="16dp" android:layout_marginStart="4dp" android:textStyle="bold"/>
+        <EditText android:id="@+id/regEmail" android:layout_width="match_parent" android:layout_height="60dp" android:layout_marginTop="4dp" android:background="@drawable/bg_white_rounded" android:paddingHorizontal="16dp" android:inputType="textEmailAddress" android:text="juan.delacruz@email.com"/>
+
+        <TextView android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="Phone Number" android:textSize="12sp" android:textColor="@color/input_label" android:layout_marginTop="16dp" android:layout_marginStart="4dp" android:textStyle="bold"/>
+        <EditText android:id="@+id/regPhone" android:layout_width="match_parent" android:layout_height="60dp" android:layout_marginTop="4dp" android:background="@drawable/bg_white_rounded" android:paddingHorizontal="16dp" android:text="+63 912 345 6789"/>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="32dp"
+            android:background="@color/security_section_bg"
+            android:orientation="vertical"
+            android:padding="20dp">
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:gravity="center_vertical"
+                android:orientation="horizontal">
+                <ImageView android:layout_width="32dp" android:layout_height="32dp" android:src="@drawable/ic_security" app:tint="@color/shield_blue" />
+                <TextView android:layout_width="wrap_content" android:layout_height="wrap_content" android:layout_marginStart="12dp" android:text="Secure Your Account" android:textStyle="bold" android:textColor="#0F172A" />
+            </LinearLayout>
+
+            <EditText android:id="@+id/regUsername" android:layout_width="match_parent" android:layout_height="55dp" android:layout_marginTop="20dp" android:background="@drawable/bg_white_rounded" android:hint="Create a unique username" android:paddingHorizontal="16dp" android:drawableStart="@drawable/ic_at" android:drawablePadding="12dp" android:textColorHint="#94A3B8"/>
+
+            <EditText android:id="@+id/regPassword" android:layout_width="match_parent" android:layout_height="55dp" android:layout_marginTop="12dp" android:background="@drawable/bg_white_rounded" android:hint="Enter your password" android:paddingHorizontal="16dp" android:inputType="textPassword" android:drawableStart="@drawable/ic_lock" android:drawablePadding="12dp" android:textColorHint="#94A3B8"/>
+
+            <EditText android:id="@+id/regConfirmPassword" android:layout_width="match_parent" android:layout_height="55dp" android:layout_marginTop="12dp" android:background="@drawable/bg_white_rounded" android:hint="Re-enter password" android:paddingHorizontal="16dp" android:inputType="textPassword" android:drawableStart="@drawable/ic_verified_user" android:drawablePadding="12dp" android:textColorHint="#94A3B8"/>
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="12dp"
+                android:text="ⓘ Password must be at least 8 characters, include an uppercase letter, a number, and a special character."
+                android:textColor="#64748B"
+                android:textSize="12sp" />
+        </LinearLayout>
+
+        <Button
+            android:id="@+id/btnRegister"
+            android:layout_width="match_parent"
+            android:layout_height="65dp"
+            android:layout_marginTop="32dp"
+            android:backgroundTint="@color/shield_blue"
+            android:text="Confirm &amp; Register"
+            android:textAllCaps="false"
+            android:textStyle="bold"
+            app:cornerRadius="16dp" />
+
+    </LinearLayout>
+</ScrollView>

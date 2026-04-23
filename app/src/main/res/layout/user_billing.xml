@@ -1,0 +1,89 @@
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="#F8FAFC">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:padding="20dp">
+
+        <LinearLayout
+            android:id="@+id/bannerOverdue"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:background="@drawable/bg_overdue_banner"
+            android:orientation="vertical"
+            android:padding="24dp">
+
+            <RelativeLayout android:layout_width="match_parent" android:layout_height="wrap_content">
+                <ImageView
+                    android:id="@+id/iconAlert"
+                    android:layout_width="40dp"
+                    android:layout_height="40dp"
+                    android:src="@drawable/ic_error"
+                    app:tint="@color/overdue_btn" />
+                <LinearLayout
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_toEndOf="@id/iconAlert"
+                    android:layout_marginStart="16dp"
+                    android:orientation="vertical">
+                    <TextView android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="CRITICAL STATUS" android:textSize="11sp" android:textStyle="bold" android:textColor="@color/overdue_text_title"/>
+                    <TextView android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="Payment Overdue" android:textSize="20sp" android:textStyle="bold" android:textColor="@color/overdue_text_title"/>
+                </LinearLayout>
+            </RelativeLayout>
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="16dp"
+                android:text="Your account access will be limited in 48 hours. Please settle the outstanding balance immediately."
+                android:textColor="#842029"
+                android:textSize="14sp"/>
+
+            <Button
+                android:layout_width="wrap_content"
+                android:layout_height="50dp"
+                android:layout_marginTop="20dp"
+                android:backgroundTint="@color/overdue_btn"
+                android:text="Pay Balance Now"
+                android:textAllCaps="false"
+                app:cornerRadius="12dp" />
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="24dp"
+            android:background="@drawable/bg_billing_plan"
+            android:orientation="vertical"
+            android:padding="24dp">
+
+            <RelativeLayout android:layout_width="match_parent" android:layout_height="wrap_content">
+                <TextView android:id="@+id/labelPlan" android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="CURRENT PLAN" android:textColor="#94A3B8" android:textSize="11sp" android:textStyle="bold"/>
+                <TextView android:layout_width="wrap_content" android:layout_height="wrap_content" android:layout_alignParentEnd="true" android:text="ACTIVE" android:background="@drawable/bg_badge" android:paddingHorizontal="12dp" android:paddingVertical="4dp" android:textColor="@color/billing_card_bg" android:textSize="10sp" android:textStyle="bold"/>
+                <TextView android:id="@+id/tvPlanTitle" android:layout_width="wrap_content" android:layout_height="wrap_content" android:layout_below="@id/labelPlan" android:layout_marginTop="8dp" android:text="Enterprise Fiber" android:textColor="@color/white" android:textSize="28sp" android:textStyle="bold"/>
+            </RelativeLayout>
+
+            <TextView android:id="@+id/tvPriceMonth" android:layout_width="wrap_content" android:layout_height="wrap_content" android:layout_marginTop="24dp" android:text="$89.90 /month" android:textColor="@color/white" android:textSize="32sp" android:textStyle="bold"/>
+
+            <LinearLayout android:layout_width="match_parent" android:layout_height="wrap_content" android:orientation="horizontal" android:layout_marginTop="24dp">
+                <include layout="@layout/item_mini_stat" android:layout_width="0dp" android:layout_height="wrap_content" android:layout_weight="1" android:layout_marginEnd="8dp"/>
+                <include layout="@layout/item_mini_stat" android:layout_width="0dp" android:layout_height="wrap_content" android:layout_weight="1" />
+            </LinearLayout>
+        </LinearLayout>
+
+        <TextView android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="Recent Activity" android:textSize="20sp" android:textStyle="bold" android:layout_marginTop="32dp" android:textColor="#0F172A"/>
+
+        <androidx.recyclerview.widget.RecyclerView
+            android:id="@+id/rvRecentActivity"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="16dp"
+            android:nestedScrollingEnabled="false" />
+
+    </LinearLayout>
+</ScrollView>
