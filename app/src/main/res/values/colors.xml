@@ -42,4 +42,11 @@
     <color name="profile_header_start">#2D62B5</color>
     <color name="profile_header_end">#1E3A8A</color>
     <color name="progress_bg">#EDF2F7</color>
+    <color name="solusyon_blue">#2D62B5</color>
+    <color name="feature_card_bg">#F1F5F9</color>
+    <color name="dot_active">#2D62B5</color>
+    <color name="dot_inactive">#E2E8F0</color>
+    <color name="network_live_tag">#CBD5E1</color>
+    <color name="brand_blue">#2D62B5</color>
+    <color name="text_secondary">#64748B</color>
 </resources>

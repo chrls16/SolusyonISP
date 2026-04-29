@@ -20,6 +20,11 @@ import com.google.android.material.button.MaterialButton;
 import com.google.android.material.textfield.TextInputEditText;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.ValueEventListener;
 
 public class LoginFragment extends Fragment {
 
@@ -31,8 +36,9 @@ public class LoginFragment extends Fragment {
     private View viewSuccess;
     private View viewError;
 
-    // Firebase Auth instance
+    // Firebase Auth & Database
     private FirebaseAuth mAuth;
+    private DatabaseReference mDatabase;
 
     public LoginFragment() {
         // Required empty public constructor
@@ -44,25 +50,16 @@ public class LoginFragment extends Fragment {
         return inflater.inflate(R.layout.fragment_login, container, false);
     }
 
-
-
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
 
         // Hide the Header and Bottom Navigation Bar on the Login Screen
-        View headerLayout = requireActivity().findViewById(R.id.headerLayout);
-        if (headerLayout != null) {
-            headerLayout.setVisibility(View.GONE);
-        }
+        toggleSystemUI(false);
 
-        View bottomNav = requireActivity().findViewById(R.id.bottomNavigation);
-        if (bottomNav != null) {
-            bottomNav.setVisibility(View.GONE);
-        }
-
-        // Initialize Firebase Auth
+        // Initialize Firebase
         mAuth = FirebaseAuth.getInstance();
+        mDatabase = FirebaseDatabase.getInstance("https://solusyon-isp-default-rtdb.asia-southeast1.firebasedatabase.app/").getReference();
 
         // Initialize views
         etUsername = view.findViewById(R.id.etUsername);
@@ -73,15 +70,11 @@ public class LoginFragment extends Fragment {
         viewSuccess = view.findViewById(R.id.viewSuccess);
         viewError = view.findViewById(R.id.viewError);
 
-        // REMEMBER ME: Load saved credentials (if any)
+        // REMEMBER ME: Load saved credentials
         SharedPreferences prefs = requireActivity().getSharedPreferences("LoginPrefs", 0);
-        boolean rememberMe = prefs.getBoolean("rememberMe", false);
-
-        if (rememberMe) {
-            String savedEmail = prefs.getString("email", "");
-            String savedPassword = prefs.getString("password", "");
-            etUsername.setText(savedEmail);
-            etPassword.setText(savedPassword);
+        if (prefs.getBoolean("rememberMe", false)) {
+            etUsername.setText(prefs.getString("email", ""));
+            etPassword.setText(prefs.getString("password", ""));
             cbTrustDevice.setChecked(true);
         }
 
@@ -89,7 +82,7 @@ public class LoginFragment extends Fragment {
         btnLogin.setOnClickListener(v -> handleLogin());
 
         tvForgotPassword.setOnClickListener(v -> {
-            Toast.makeText(requireContext(), "Forgot Password clicked", Toast.LENGTH_SHORT).show();
+            Toast.makeText(requireContext(), "Password reset feature coming soon", Toast.LENGTH_SHORT).show();
         });
     }
 
@@ -106,48 +99,97 @@ public class LoginFragment extends Fragment {
             return;
         }
 
-        // Disable button while loading
         btnLogin.setEnabled(false);
-        btnLogin.setText("Signing in...");
+        btnLogin.setText("Verifying...");
 
-        // Firebase Authentication
+        // 1. Firebase Authentication
         mAuth.signInWithEmailAndPassword(email, password)
                 .addOnCompleteListener(requireActivity(), task -> {
-                    // Re-enable button
-                    btnLogin.setEnabled(true);
-                    btnLogin.setText("Sign in to Dashboard");
-
                     if (task.isSuccessful()) {
-                        // Sign in success
                         FirebaseUser user = mAuth.getCurrentUser();
-                        viewSuccess.setVisibility(View.VISIBLE);
+                        if (user != null) {
+                            // Save credentials if "Remember Me" is checked
+                            saveLoginPrefs(email, password, isTrusted);
 
-                        // REMEMBER ME: Save or clear credentials
-                        SharedPreferences loginPrefs = requireActivity()
-                                .getSharedPreferences("LoginPrefs", 0);
-                        SharedPreferences.Editor editor = loginPrefs.edit();
-
-                        if (isTrusted) {
-                            editor.putString("email", email);
-                            editor.putString("password", password);
-                            editor.putBoolean("rememberMe", true);
-                        } else {
-                            editor.clear();
+                            // 2. Check Role and Redirect
+                            checkUserRole(user.getUid());
                         }
-
-                        editor.apply();
-
-                        new Handler(Looper.getMainLooper()).postDelayed(() -> {
-                            FragmentTransaction transaction = requireActivity().getSupportFragmentManager().beginTransaction();
-                            transaction.setCustomAnimations(android.R.anim.fade_in, android.R.anim.fade_out);
-                            transaction.replace(R.id.fragment_container, new DashboardFragment());
-                            transaction.commit();
-                        }, 800);
-
                     } else {
-                        // If sign in fails, display a message to the user.
+                        btnLogin.setEnabled(true);
+                        btnLogin.setText("Sign in to Dashboard");
                         viewError.setVisibility(View.VISIBLE);
                     }
                 });
+    }
+
+    private void checkUserRole(String uid) {
+        // Make sure we are looking at the exact path
+        mDatabase.child("users").child(uid).addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot snapshot) {
+                if (snapshot.exists()) {
+                    // Get the role and force it to lowercase to avoid "Admin" vs "admin" issues
+                    String role = snapshot.child("role").getValue(String.class);
+                    if (role != null) role = role.toLowerCase().trim();
+
+                    // DEBUG TOAST: This will show you what the app sees
+                    Toast.makeText(getContext(), "Role detected: [" + role + "]", Toast.LENGTH_SHORT).show();
+
+                    viewSuccess.setVisibility(View.VISIBLE);
+
+                    if ("subscriber".equals(role)) {
+                        // If the database says "subscriber", load the Customer dashboard
+                        navigateToFragment(new UserDashboardFragment(), false);
+                    } else if ("admin".equals(role)) {
+                        // If the database says "admin", load the Staff dashboard
+                        navigateToFragment(new DashboardFragment(), true);
+                    } else {
+                        // If role is something else, default to Admin for now or show error
+                        navigateToFragment(new DashboardFragment(), true);
+                    }
+                } else {
+                    // User ID was not found in the "users" node
+                    Toast.makeText(getContext(), "Error: User profile not found in database.", Toast.LENGTH_LONG).show();
+                    btnLogin.setEnabled(true);
+                }
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError error) {
+                btnLogin.setEnabled(true);
+                Toast.makeText(getContext(), "Database Error: " + error.getMessage(), Toast.LENGTH_SHORT).show();
+            }
+        });
+    }
+
+    private void navigateToFragment(Fragment fragment, boolean showAdminUI) {
+        new Handler(Looper.getMainLooper()).postDelayed(() -> {
+            if (isAdded()) {
+                toggleSystemUI(showAdminUI);
+                FragmentTransaction transaction = requireActivity().getSupportFragmentManager().beginTransaction();
+                transaction.setCustomAnimations(android.R.anim.fade_in, android.R.anim.fade_out);
+                transaction.replace(R.id.fragment_container, fragment);
+                transaction.commit();
+            }
+        }, 800);
+    }
+
+    private void toggleSystemUI(boolean show) {
+        if (getActivity() instanceof MainActivity) {
+            ((MainActivity) getActivity()).toggleSystemUI(show);
+        }
+    }
+
+    private void saveLoginPrefs(String email, String password, boolean remember) {
+        SharedPreferences loginPrefs = requireActivity().getSharedPreferences("LoginPrefs", 0);
+        SharedPreferences.Editor editor = loginPrefs.edit();
+        if (remember) {
+            editor.putString("email", email);
+            editor.putString("password", password);
+            editor.putBoolean("rememberMe", true);
+        } else {
+            editor.clear();
+        }
+        editor.apply();
     }
 }

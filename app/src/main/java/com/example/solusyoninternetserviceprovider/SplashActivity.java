@@ -23,7 +23,7 @@ public class SplashActivity extends AppCompatActivity {
         new Handler(Looper.getMainLooper()).postDelayed(() -> {
 
             // Change MainActivity.class to LoginActivity.class if you have a separate login screen!
-            Intent intent = new Intent(SplashActivity.this, MainActivity.class);
+            Intent intent = new Intent(SplashActivity.this, OnboardingActivity.class);
             startActivity(intent);
 
             // finish() prevents the user from pressing the back button to return to the loading screen

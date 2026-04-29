@@ -24,6 +24,6 @@ dependencyResolutionManagement {
     }
 }
 
-rootProject.name = "Solusyon Internet Service Provider"
+rootProject.name = "SISP"
 include(":app")
  

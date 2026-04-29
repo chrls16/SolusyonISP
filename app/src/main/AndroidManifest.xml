@@ -24,8 +24,29 @@
         </activity>
 
         <activity
+            android:name=".OnboardingActivity"
+            android:exported="false" />
+
+        <activity
             android:name=".MainActivity"
             android:exported="false" />
+
+        <activity
+            android:name=".WelcomeActivity"
+            android:exported="false" />
+
+        <activity
+            android:name=".UserCreateAccountActivity"
+            android:exported="false" />
+
+        <activity
+            android:name=".UserApplicationReceiptActivity"
+            android:exported="false" />
+
+        <activity
+            android:name=".PendingStatusActivity"
+            android:exported="false" />
+
 
     </application>
 
