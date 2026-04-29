@@ -1,5 +1,6 @@
 package com.example.solusyoninternetserviceprovider;
 
+import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Looper;
@@ -43,11 +44,18 @@ public class LoginFragment extends Fragment {
         return inflater.inflate(R.layout.fragment_login, container, false);
     }
 
+
+
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
 
-        // Hide the Bottom Navigation Bar on the Login Screen
+        // Hide the Header and Bottom Navigation Bar on the Login Screen
+        View headerLayout = requireActivity().findViewById(R.id.headerLayout);
+        if (headerLayout != null) {
+            headerLayout.setVisibility(View.GONE);
+        }
+
         View bottomNav = requireActivity().findViewById(R.id.bottomNavigation);
         if (bottomNav != null) {
             bottomNav.setVisibility(View.GONE);
@@ -64,6 +72,18 @@ public class LoginFragment extends Fragment {
         tvForgotPassword = view.findViewById(R.id.tvForgotPassword);
         viewSuccess = view.findViewById(R.id.viewSuccess);
         viewError = view.findViewById(R.id.viewError);
+
+        // REMEMBER ME: Load saved credentials (if any)
+        SharedPreferences prefs = requireActivity().getSharedPreferences("LoginPrefs", 0);
+        boolean rememberMe = prefs.getBoolean("rememberMe", false);
+
+        if (rememberMe) {
+            String savedEmail = prefs.getString("email", "");
+            String savedPassword = prefs.getString("password", "");
+            etUsername.setText(savedEmail);
+            etPassword.setText(savedPassword);
+            cbTrustDevice.setChecked(true);
+        }
 
         // Set click listeners
         btnLogin.setOnClickListener(v -> handleLogin());
@@ -101,6 +121,21 @@ public class LoginFragment extends Fragment {
                         // Sign in success
                         FirebaseUser user = mAuth.getCurrentUser();
                         viewSuccess.setVisibility(View.VISIBLE);
+
+                        // REMEMBER ME: Save or clear credentials
+                        SharedPreferences loginPrefs = requireActivity()
+                                .getSharedPreferences("LoginPrefs", 0);
+                        SharedPreferences.Editor editor = loginPrefs.edit();
+
+                        if (isTrusted) {
+                            editor.putString("email", email);
+                            editor.putString("password", password);
+                            editor.putBoolean("rememberMe", true);
+                        } else {
+                            editor.clear();
+                        }
+
+                        editor.apply();
 
                         new Handler(Looper.getMainLooper()).postDelayed(() -> {
                             FragmentTransaction transaction = requireActivity().getSupportFragmentManager().beginTransaction();

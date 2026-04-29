@@ -23,7 +23,8 @@
                 android:layout_width="60dp"
                 android:layout_height="60dp"
                 android:src="@drawable/ic_check_circle"
-                app:tint="#2D6A4F" />
+                app:tint="#2D6A4F"
+                />
 
             <LinearLayout
                 android:layout_width="wrap_content"
@@ -221,7 +222,7 @@
             android:backgroundTint="#1D4ED8"
             android:text="Proceed to Create Account  →"
             android:textAllCaps="false"
-            app:cornerRadius="16dp" />
+            app:cardCornerRadius="12dp"/>
 
         <Button
             android:id="@+id/btnSavePDF"
@@ -232,7 +233,7 @@
             android:backgroundTint="#EFF6FF"
             android:text="⬇ Save Receipt as PDF"
             android:textColor="#1E40AF"
-            app:cornerRadius="16dp" />
+            app:cardCornerRadius="12dp"  />
 
     </LinearLayout>
 </ScrollView>

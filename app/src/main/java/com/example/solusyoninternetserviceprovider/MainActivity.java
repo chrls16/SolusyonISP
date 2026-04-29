@@ -31,10 +31,9 @@ public class MainActivity extends AppCompatActivity {
         // Initialize Bottom Navigation
         bottomNavigationView = findViewById(R.id.bottomNavigation);
 
-        // Load the DashboardFragment by default when the activity starts
-        // (Changed from LoginFragment since you are now inside the main app)
+        // Load the LoginFragment by default — user must authenticate first
         if (savedInstanceState == null) {
-            loadFragment(new DashboardFragment(), false);
+            loadFragment(new LoginFragment(), false);
         }
 
         bottomNavigationView.setOnItemSelectedListener(item -> {

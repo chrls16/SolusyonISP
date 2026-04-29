@@ -59,8 +59,11 @@ public class DashboardFragment extends Fragment {
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
 
-        // Safety check for BottomNav
+        // Safety check — show Header and BottomNav when entering Dashboard
         if (getActivity() != null) {
+            View headerLayout = getActivity().findViewById(R.id.headerLayout);
+            if (headerLayout != null) headerLayout.setVisibility(View.VISIBLE);
+
             View bottomNav = getActivity().findViewById(R.id.bottomNavigation);
             if (bottomNav != null) bottomNav.setVisibility(View.VISIBLE);
         }

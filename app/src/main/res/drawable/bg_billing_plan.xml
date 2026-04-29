@@ -1,4 +1,4 @@
 <shape xmlns:android="http://schemas.android.com/apk/res/android">
     <solid android:color="@color/billing_card_bg" />
-    <corners android:radius="32dp" />
+    <corners android:radius="12dp" />
 </shape>
