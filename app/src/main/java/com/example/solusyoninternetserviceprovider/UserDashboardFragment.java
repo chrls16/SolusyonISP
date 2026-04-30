@@ -165,24 +165,38 @@ public class UserDashboardFragment extends Fragment {
         }
     }
 
+    // Inside UserDashboardFragment.java, update validateAndProceed():
     private void validateAndProceed() {
         String phone = etPhone.getText().toString().trim();
+        String firstName = etFirstName.getText().toString().trim();
+        String lastName = etLastName.getText().toString().trim();
+        String barangay = spBarangay.getSelectedItem().toString();
+
+        // 1. Validations
         if (phone.length() != 11 || !phone.startsWith("09")) {
             etPhone.setError("Must be exactly 11 digits starting with 09");
             return;
         }
-
         if (spBarangay.getSelectedItemPosition() == 0) {
             Toast.makeText(getContext(), "Please select a Barangay", Toast.LENGTH_SHORT).show();
             return;
         }
 
-        String message = "Plan: " + selectedPlan + "\nPayment: " + selectedPayment;
-        Toast.makeText(getContext(), "Processing...\n" + message, Toast.LENGTH_LONG).show();
-    }
+        // 2. Prepare Data Bundle
+// Inside UserDashboardFragment validateAndProceed():
+        Bundle bundle = new Bundle();
+        bundle.putString("fullName", firstName + " " + lastName);
+        bundle.putString("phone", phone);
+        bundle.putString("barangay", barangay);
+        bundle.putString("plan", selectedPlan);
+        bundle.putString("payment", selectedPayment);
 
-    private String capitalize(String str) {
-        if (str == null || str.isEmpty()) return str;
-        return str.substring(0, 1).toUpperCase() + str.substring(1).toLowerCase();
+        UserTermsFragment termsFragment = new UserTermsFragment();
+        termsFragment.setArguments(bundle); // <--- THIS LINE IS KEY
+
+        getActivity().getSupportFragmentManager().beginTransaction()
+                .replace(R.id.fragment_container, termsFragment)
+                .addToBackStack(null)
+                .commit();
+        }
     }
-}

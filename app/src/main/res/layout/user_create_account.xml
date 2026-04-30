@@ -69,7 +69,7 @@
             android:layout_marginTop="4dp"
             android:background="@drawable/bg_white_rounded"
             android:paddingHorizontal="16dp"
-            android:hint="Juan Dela Cruz"
+            android:hint="e.g. Juan Dela Cruz"
             android:textColor="#0F172A" />
 
         <TextView
