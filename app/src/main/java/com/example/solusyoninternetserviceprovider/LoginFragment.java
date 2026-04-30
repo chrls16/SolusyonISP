@@ -1,5 +1,6 @@
 package com.example.solusyoninternetserviceprovider;
 
+import android.content.Intent; // <--- ADD THIS LINE
 import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.os.Handler;
@@ -163,33 +164,25 @@ public class LoginFragment extends Fragment {
     }
 
     private void checkUserRole(String uid) {
-        // Make sure we are looking at the exact path
+        // 1. First, check the user's role
         mDatabase.child("users").child(uid).addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot snapshot) {
                 if (snapshot.exists()) {
-                    // Get the role and force it to lowercase to avoid "Admin" vs "admin" issues
                     String role = snapshot.child("role").getValue(String.class);
                     if (role != null) role = role.toLowerCase().trim();
 
-                    // DEBUG TOAST: This will show you what the app sees
-                    Toast.makeText(getContext(), "Role detected: [" + role + "]", Toast.LENGTH_SHORT).show();
-
-                    viewSuccess.setVisibility(View.VISIBLE);
-
                     if ("subscriber".equals(role)) {
-                        // If the database says "subscriber", load the Customer dashboard
-                        navigateToFragment(new UserDashboardFragment(), false);
+                        // 2. If Subscriber, check their application status
+                        checkApplicationStatus(uid);
                     } else if ("admin".equals(role)) {
-                        // If the database says "admin", load the Staff dashboard
+                        // 3. If Admin, go directly to Staff Dashboard
                         navigateToFragment(new DashboardFragment(), true);
                     } else {
-                        // If role is something else, default to Admin for now or show error
                         navigateToFragment(new DashboardFragment(), true);
                     }
                 } else {
-                    // User ID was not found in the "users" node
-                    Toast.makeText(getContext(), "Error: User profile not found in database.", Toast.LENGTH_LONG).show();
+                    Toast.makeText(getContext(), "User profile not found.", Toast.LENGTH_SHORT).show();
                     btnLogin.setEnabled(true);
                 }
             }
@@ -197,7 +190,51 @@ public class LoginFragment extends Fragment {
             @Override
             public void onCancelled(@NonNull DatabaseError error) {
                 btnLogin.setEnabled(true);
-                Toast.makeText(getContext(), "Database Error: " + error.getMessage(), Toast.LENGTH_SHORT).show();
+            }
+        });
+    }
+
+    private void checkApplicationStatus(String uid) {
+        // Look into the ServiceApplications node
+        mDatabase.child("ServiceApplications").child(uid).addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot snapshot) {
+                if (snapshot.exists()) {
+                    String status = snapshot.child("status").getValue(String.class);
+
+                    // Only let them into the Dashboard if the status is exactly "approved"
+                    if ("approved".equalsIgnoreCase(status)) {
+                        navigateToFragment(new UserDashboardFragment(), false);
+                    } else {
+                        // PENDING OR DENIED: Show the Digital Receipt Activity
+                        viewSuccess.setVisibility(View.VISIBLE);
+
+                        new Handler(Looper.getMainLooper()).postDelayed(() -> {
+                            if (isAdded()) {
+                                Intent intent = new Intent(getActivity(), UserApplicationReceiptActivity.class);
+
+                                // Pass the application data stored in Firebase to the Receipt
+                                intent.putExtra("appId", snapshot.child("applicationId").getValue(String.class));
+                                intent.putExtra("date", snapshot.child("date").getValue(String.class));
+                                intent.putExtra("fullName", snapshot.child("fullName").getValue(String.class));
+                                intent.putExtra("phone", snapshot.child("phone").getValue(String.class));
+                                intent.putExtra("plan", snapshot.child("plan").getValue(String.class));
+                                intent.putExtra("payment", snapshot.child("payment").getValue(String.class));
+
+                                startActivity(intent);
+                                if (getActivity() != null) getActivity().finish();
+                            }
+                        }, 800);
+                    }
+                } else {
+                    // NO APPLICATION FILED YET: Go to form (UserDashboardFragment)
+                    navigateToFragment(new UserDashboardFragment(), false);
+                }
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError error) {
+                btnLogin.setEnabled(true);
             }
         });
     }
