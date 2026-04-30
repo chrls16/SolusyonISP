@@ -13,18 +13,20 @@ import android.widget.Toast;
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
-import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 
 import java.util.Calendar;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
+import java.util.Map;
 
 public class PendingRequestAdapter extends RecyclerView.Adapter<PendingRequestAdapter.ViewHolder> {
 
     private List<PendingRequestModel> requestList;
     private Context context;
+    private final String DB_URL = "https://solusyon-isp-default-rtdb.asia-southeast1.firebasedatabase.app";
 
     public PendingRequestAdapter(List<PendingRequestModel> requestList, Context context) {
         this.requestList = requestList;
@@ -42,26 +44,18 @@ public class PendingRequestAdapter extends RecyclerView.Adapter<PendingRequestAd
     public void onBindViewHolder(@NonNull ViewHolder holder, int position) {
         PendingRequestModel request = requestList.get(position);
 
-        holder.tvApplicantName.setText(request.getName());
-        holder.tvPlanType.setText(request.getPlanType());
-        holder.tvRefNo.setText(request.getReferenceNo());
-        holder.tvAddress.setText(request.getAddress());
-        holder.tvContact.setText(request.getContact());
+        // Map fields from the ServiceApplications structure
+        holder.tvApplicantName.setText(request.getFullName());
+        holder.tvPlanType.setText(request.getPlan() + " Fiber Plan");
+        holder.tvRefNo.setText(request.getApplicationId());
+        holder.tvAddress.setText(request.getBarangay());
+        holder.tvContact.setText(request.getPhone());
 
+        // Approval starts the Date/Time picker flow
         holder.btnApprove.setOnClickListener(v -> showDatePicker(request, position));
 
-        holder.btnReject.setOnClickListener(v -> {
-            // Remove from Firebase directly for rejection to keep logic consistent
-            DatabaseReference db = FirebaseDatabase.getInstance("https://solusyon-isp-default-rtdb.asia-southeast1.firebasedatabase.app").getReference();
-            db.child("PendingRequests").orderByChild("referenceNo").equalTo(request.getReferenceNo())
-                    .get().addOnCompleteListener(task -> {
-                        if (task.isSuccessful() && task.getResult().exists()) {
-                            for (DataSnapshot child : task.getResult().getChildren()) {
-                                child.getRef().removeValue();
-                            }
-                        }
-                    });
-        });
+        // Rejection updates status to "denied"
+        holder.btnReject.setOnClickListener(v -> updateStatus(request.getUid(), "denied"));
     }
 
     private void showDatePicker(PendingRequestModel request, int position) {
@@ -99,40 +93,38 @@ public class PendingRequestAdapter extends RecyclerView.Adapter<PendingRequestAd
     }
 
     private void approveAndSyncToEvents(PendingRequestModel request, String date, String time, int position) {
-        // 1. Safety Check: If the context is gone, don't even start
         if (context == null) return;
 
-        DatabaseReference db = FirebaseDatabase.getInstance("https://solusyon-isp-default-rtdb.asia-southeast1.firebasedatabase.app").getReference();
+        DatabaseReference db = FirebaseDatabase.getInstance(DB_URL).getReference();
 
+        // 1. Create the Installation Event
         EventSchedule newEvent = new EventSchedule(
-                "Installation: " + request.getName(),
-                request.getAddress(),
+                "Installation: " + request.getFullName(),
+                request.getBarangay(),
                 time,
                 date
         );
 
-        // 2. Perform Firebase tasks
+        // 2. Push to EventSchedule
         db.child("EventSchedule").child("Upcoming").push().setValue(newEvent)
                 .addOnSuccessListener(aVoid -> {
-                    db.child("PendingRequests").orderByChild("referenceNo").equalTo(request.getReferenceNo())
-                            .get().addOnCompleteListener(task -> {
-                                if (task.isSuccessful() && task.getResult().exists()) {
-                                    for (com.google.firebase.database.DataSnapshot child : task.getResult().getChildren()) {
-                                        child.getRef().removeValue();
-                                    }
-
-                                    // 3. UI UPDATE FIX: Use a Post-Delayed or runOnUIThread
-                                    // to let the Dialog dismiss fully before updating the list.
-                                    if (context != null) {
-                                        new android.os.Handler(android.os.Looper.getMainLooper()).post(() -> {
-                                            Toast.makeText(context, "Successfully Scheduled!", Toast.LENGTH_SHORT).show();
-                                        });
-                                    }
-                                }
-                            });
+                    // 3. Update the User's Application status to "approved"
+                    updateStatus(request.getUid(), "approved");
                 })
                 .addOnFailureListener(e -> {
-                    if (context != null) Toast.makeText(context, "Sync Error: " + e.getMessage(), Toast.LENGTH_SHORT).show();
+                    Toast.makeText(context, "Sync Error: " + e.getMessage(), Toast.LENGTH_SHORT).show();
+                });
+    }
+
+    private void updateStatus(String uid, String status) {
+        DatabaseReference db = FirebaseDatabase.getInstance(DB_URL).getReference("ServiceApplications");
+
+        db.child(uid).child("status").setValue(status)
+                .addOnCompleteListener(task -> {
+                    if (task.isSuccessful()) {
+                        String msg = status.equals("approved") ? "Scheduled & Approved!" : "Application Denied.";
+                        Toast.makeText(context, msg, Toast.LENGTH_SHORT).show();
+                    }
                 });
     }
 

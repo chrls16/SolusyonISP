@@ -6,6 +6,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.LinearLayout;
+import android.widget.TextView;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -20,7 +21,8 @@ import com.google.firebase.database.ValueEventListener;
 public class SubscriberManagement extends Fragment {
 
     private View barBagumbayan, barPalanas, barPobNorte, barPobSur, barTugos;
-    private DatabaseReference subscribersRef;
+    private TextView tvPendingValue, tvTotalConValue, tvActiveConValue;
+    private DatabaseReference mDatabase;
 
     public SubscriberManagement() {
         // Required empty public constructor
@@ -35,20 +37,18 @@ public class SubscriberManagement extends Fragment {
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
 
-        // 1. Show Bottom Nav
-        View bottomNav = requireActivity().findViewById(R.id.bottomNavigation);
-        if (bottomNav != null) {
-            bottomNav.setVisibility(View.VISIBLE);
-        }
+        // 1. Initialize Views
+        tvPendingValue = view.findViewById(R.id.tvPendingValue);
+        tvTotalConValue = view.findViewById(R.id.tvTotalConValue);
+        tvActiveConValue = view.findViewById(R.id.tvActiveConValue);
 
-        // 2. Initialize Graph Views
         barBagumbayan = view.findViewById(R.id.barBagumbayan);
         barPalanas = view.findViewById(R.id.barPalanas);
         barPobNorte = view.findViewById(R.id.barPobNorte);
         barPobSur = view.findViewById(R.id.barPobSur);
         barTugos = view.findViewById(R.id.barTugos);
 
-        // 3. Set Click Listener for Pending Setups Card
+        // 2. Click Listener for Pending Setups Card
         View cardPendingSetups = view.findViewById(R.id.cardPendingSetups);
         if (cardPendingSetups != null) {
             cardPendingSetups.setOnClickListener(v -> {
@@ -56,87 +56,106 @@ public class SubscriberManagement extends Fragment {
                 requireActivity().getSupportFragmentManager().beginTransaction()
                         .setCustomAnimations(android.R.anim.fade_in, android.R.anim.fade_out)
                         .replace(R.id.fragment_container, new PendingStatusFragment())
-                        .addToBackStack(null) // Allows the user to press 'Back' to return
+                        .addToBackStack(null)
                         .commit();
             });
         }
 
-        // 4. Initialize Firebase Database
-        FirebaseDatabase database = FirebaseDatabase.getInstance("https://solusyon-isp-default-rtdb.asia-southeast1.firebasedatabase.app");
-        subscribersRef = database.getReference("Subscribers");
+        // 3. Initialize Firebase
+        mDatabase = FirebaseDatabase.getInstance("https://solusyon-isp-default-rtdb.asia-southeast1.firebasedatabase.app").getReference();
 
-        // 5. Fetch Data and Animate Graph
+        // 4. Fetch Data
+        fetchPendingSetupsCount();
+        fetchSubscriberStats();
         fetchGraphData();
     }
 
-    private void fetchGraphData() {
-        subscribersRef.addValueEventListener(new ValueEventListener() {
+    private void fetchPendingSetupsCount() {
+        // Fetch count from ServiceApplications where status is "pending"
+        mDatabase.child("ServiceApplications").addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot snapshot) {
-                int countBagumbayan = 0;
-                int countPalanas = 0;
-                int countPobNorte = 0;
-                int countPobSur = 0;
-                int countTugos = 0;
-
-                // Loop through all subscribers and count them by their address/barangay
+                int count = 0;
                 for (DataSnapshot ds : snapshot.getChildren()) {
-                    // Assuming your subscriber data has an "address" field
-                    String address = ds.child("address").getValue(String.class);
-
-                    if (address != null) {
-                        address = address.toLowerCase();
-                        if (address.contains("bagumbayan")) countBagumbayan++;
-                        else if (address.contains("palanas")) countPalanas++;
-                        else if (address.contains("norte")) countPobNorte++;
-                        else if (address.contains("sur")) countPobSur++;
-                        else if (address.contains("tugos")) countTugos++;
+                    String status = ds.child("status").getValue(String.class);
+                    if ("pending".equalsIgnoreCase(status)) {
+                        count++;
                     }
                 }
-
-                // Find the highest number so we can scale the graph properly
-                int maxCount = Math.max(countBagumbayan, Math.max(countPalanas,
-                        Math.max(countPobNorte, Math.max(countPobSur, countTugos))));
-
-                // If database is empty, prevent dividing by zero
-                if (maxCount == 0) maxCount = 1;
-
-                // Max height of the bar graph container is 100dp
-                int maxBarHeightDp = 100;
-
-                // Set the heights!
-                setBarHeight(barBagumbayan, countBagumbayan, maxCount, maxBarHeightDp);
-                setBarHeight(barPalanas, countPalanas, maxCount, maxBarHeightDp);
-                setBarHeight(barPobNorte, countPobNorte, maxCount, maxBarHeightDp);
-                setBarHeight(barPobSur, countPobSur, maxCount, maxBarHeightDp);
-                setBarHeight(barTugos, countTugos, maxCount, maxBarHeightDp);
+                if (isAdded()) {
+                    tvPendingValue.setText(String.valueOf(count));
+                }
             }
 
             @Override
-            public void onCancelled(@NonNull DatabaseError error) {
-                // Handle possible errors here
-            }
+            public void onCancelled(@NonNull DatabaseError error) {}
         });
     }
 
-    // Helper method to mathematically scale the bar and convert dp to actual screen pixels
+    private void fetchSubscriberStats() {
+        // Fetch Total and Active connections
+        mDatabase.child("users").addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot snapshot) {
+                int total = 0;
+                int active = 0;
+                for (DataSnapshot ds : snapshot.getChildren()) {
+                    String role = ds.child("role").getValue(String.class);
+                    if ("subscriber".equals(role)) {
+                        total++;
+                        // You can add logic here to check if they are "active" vs "disconnected"
+                        active++;
+                    }
+                }
+                if (isAdded()) {
+                    tvTotalConValue.setText(String.valueOf(total));
+                    tvActiveConValue.setText(String.valueOf(active));
+                }
+            }
+            @Override
+            public void onCancelled(@NonNull DatabaseError error) {}
+        });
+    }
+
+    private void fetchGraphData() {
+        mDatabase.child("ServiceApplications").addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot snapshot) {
+                int countBagumbayan = 0, countPalanas = 0, countPobNorte = 0, countPobSur = 0, countTugos = 0;
+
+                for (DataSnapshot ds : snapshot.getChildren()) {
+                    String barangay = ds.child("barangay").getValue(String.class);
+                    if (barangay != null) {
+                        barangay = barangay.toLowerCase();
+                        if (barangay.contains("bagumbayan")) countBagumbayan++;
+                        else if (barangay.contains("palanas")) countPalanas++;
+                        else if (barangay.contains("norte")) countPobNorte++;
+                        else if (barangay.contains("sur")) countPobSur++;
+                        else if (barangay.contains("tugos")) countTugos++;
+                    }
+                }
+
+                int maxCount = Math.max(countBagumbayan, Math.max(countPalanas,
+                        Math.max(countPobNorte, Math.max(countPobSur, countTugos))));
+                if (maxCount == 0) maxCount = 1;
+
+                if (isAdded()) {
+                    setBarHeight(barBagumbayan, countBagumbayan, maxCount, 100);
+                    setBarHeight(barPalanas, countPalanas, maxCount, 100);
+                    setBarHeight(barPobNorte, countPobNorte, maxCount, 100);
+                    setBarHeight(barPobSur, countPobSur, maxCount, 100);
+                    setBarHeight(barTugos, countTugos, maxCount, 100);
+                }
+            }
+            @Override public void onCancelled(@NonNull DatabaseError error) {}
+        });
+    }
+
     private void setBarHeight(View barView, int currentCount, int maxCount, int maxHeightDp) {
-        // Calculate what percentage of the max height this bar should be
         float percentage = (float) currentCount / maxCount;
-
-        // Ensure there's a tiny bit of height even if count is 0 so the bar doesn't disappear completely
         if (currentCount == 0) percentage = 0.05f;
-
         int targetHeightDp = (int) (maxHeightDp * percentage);
-
-        // Convert the DP value to actual Pixels for the device screen
-        int heightInPixels = (int) TypedValue.applyDimension(
-                TypedValue.COMPLEX_UNIT_DIP,
-                targetHeightDp,
-                getResources().getDisplayMetrics()
-        );
-
-        // Apply the new height to the view
+        int heightInPixels = (int) TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, targetHeightDp, getResources().getDisplayMetrics());
         LinearLayout.LayoutParams params = (LinearLayout.LayoutParams) barView.getLayoutParams();
         params.height = heightInPixels;
         barView.setLayoutParams(params);

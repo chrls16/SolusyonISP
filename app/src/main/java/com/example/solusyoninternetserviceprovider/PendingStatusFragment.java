@@ -66,9 +66,10 @@ public class PendingStatusFragment extends Fragment {
         adapter = new PendingRequestAdapter(requestList, requireContext());
         rvPendingRequests.setAdapter(adapter);
 
-        // 5. Firebase initialization
+        // 5. Firebase initialization - Corrected node to "ServiceApplications"
         try {
-            pendingRef = FirebaseDatabase.getInstance("https://solusyon-isp-default-rtdb.asia-southeast1.firebasedatabase.app").getReference("PendingRequests");
+            pendingRef = FirebaseDatabase.getInstance("https://solusyon-isp-default-rtdb.asia-southeast1.firebasedatabase.app/")
+                    .getReference("ServiceApplications");
             fetchPendingRequests();
         } catch (Exception e) {
             Log.e("CRASH_FIX", "Firebase Error: " + e.getMessage());
@@ -79,17 +80,39 @@ public class PendingStatusFragment extends Fragment {
         pendingRef.addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot snapshot) {
-                requestList.clear(); // This clears the old data
-                for (DataSnapshot ds : snapshot.getChildren()) {
-                    PendingRequestModel request = ds.getValue(PendingRequestModel.class);
-                    if (request != null) requestList.add(request);
+                requestList.clear(); // Clear the old data
+                if (snapshot.exists()) {
+                    for (DataSnapshot ds : snapshot.getChildren()) {
+                        PendingRequestModel request = ds.getValue(PendingRequestModel.class);
+                        if (request != null) {
+                            // Important: Get the key (UID) from the database child
+                            request.setUid(ds.getKey());
+
+                            // Only add to the list if the status is exactly "pending"
+                            if ("pending".equalsIgnoreCase(request.getStatus())) {
+                                requestList.add(request);
+                            }
+                        }
+                    }
+
+                    // Refresh the RecyclerView
+                    if (adapter != null) {
+                        adapter.notifyDataSetChanged();
+                    }
                 }
-                // This safely refreshes the UI without index errors
-                if (adapter != null) {
-                    adapter.notifyDataSetChanged();
+
+                // Show a message if no records match "pending"
+                if (requestList.isEmpty() && isAdded()) {
+                    Toast.makeText(getContext(), "No pending setups available", Toast.LENGTH_SHORT).show();
                 }
             }
-            @Override public void onCancelled(@NonNull DatabaseError error) {}
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError error) {
+                if (isAdded()) {
+                    Log.e("DATABASE_ERROR", error.getMessage());
+                }
+            }
         });
     }
 }

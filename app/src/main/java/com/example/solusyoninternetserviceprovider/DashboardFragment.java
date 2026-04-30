@@ -1,11 +1,11 @@
 package com.example.solusyoninternetserviceprovider;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
-import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -31,9 +31,10 @@ import java.util.Locale;
 
 public class DashboardFragment extends Fragment {
 
-    private TextView tvCurrentMonthYear;
+    private TextView tvCurrentMonthYear, tvLogisticsCount;
     private ImageView btnPrevMonth, btnNextMonth;
     private RecyclerView rvCalendarGrid, rvEvents, rvPaymentsDue;
+    private MaterialButton btnViewList;
 
     private PaymentDueAdapter paymentAdapter;
     private List<PaymentDue> paymentList;
@@ -43,10 +44,10 @@ public class DashboardFragment extends Fragment {
     private List<EventSchedule> displayedEvents;
 
     private Calendar calendar;
-    private DatabaseReference paymentRef, eventRef;
+    private DatabaseReference paymentRef, eventRef, applicationRef;
 
     // Store listeners so we can remove them when the fragment is destroyed
-    private ValueEventListener eventListener, paymentListener;
+    private ValueEventListener eventListener, paymentListener, applicationListener;
 
     public DashboardFragment() {}
 
@@ -68,15 +69,18 @@ public class DashboardFragment extends Fragment {
             if (bottomNav != null) bottomNav.setVisibility(View.VISIBLE);
         }
 
-        // 1. Initialize DB with correct Instance URL
+        // 1. Initialize DB
         FirebaseDatabase database = FirebaseDatabase.getInstance("https://solusyon-isp-default-rtdb.asia-southeast1.firebasedatabase.app");
         paymentRef = database.getReference("PaymentDue/Late");
         eventRef = database.getReference("EventSchedule/Upcoming");
+        applicationRef = database.getReference("ServiceApplications");
 
         // 2. UI Setup
         tvCurrentMonthYear = view.findViewById(R.id.tvCurrentMonthYear);
+        tvLogisticsCount = view.findViewById(R.id.tvLogisticsCount);
         btnPrevMonth = view.findViewById(R.id.btnPrevMonth);
         btnNextMonth = view.findViewById(R.id.btnNextMonth);
+        btnViewList = view.findViewById(R.id.btnViewList);
         rvCalendarGrid = view.findViewById(R.id.rvCalendarGrid);
         rvEvents = view.findViewById(R.id.rvEvents);
         rvPaymentsDue = view.findViewById(R.id.rvPaymentsDue);
@@ -100,7 +104,15 @@ public class DashboardFragment extends Fragment {
             setupCalendarGrid();
         });
 
-        // 5. Adapters Setup - FIXED: Use getContext() instead of requireContext() to avoid crashes
+        // 5. Button Navigation
+        btnViewList.setOnClickListener(v -> {
+            if (getActivity() != null) {
+                Intent intent = new Intent(getActivity(), PendingStatusActivity.class);
+                startActivity(intent);
+            }
+        });
+
+        // 6. Adapters Setup
         if (getContext() != null) {
             rvEvents.setLayoutManager(new LinearLayoutManager(getContext()));
             eventAdapter = new EventAdapter(displayedEvents);
@@ -111,9 +123,30 @@ public class DashboardFragment extends Fragment {
             rvPaymentsDue.setAdapter(paymentAdapter);
         }
 
-        // 6. Fetch Data
+        // 7. Fetch Data
         fetchPaymentsData();
         fetchEventsData();
+        fetchApplicationCount();
+    }
+
+    private void fetchApplicationCount() {
+        applicationListener = new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot snapshot) {
+                int count = 0;
+                for (DataSnapshot ds : snapshot.getChildren()) {
+                    String status = ds.child("status").getValue(String.class);
+                    if ("pending".equalsIgnoreCase(status)) {
+                        count++;
+                    }
+                }
+                if (isAdded() && tvLogisticsCount != null) {
+                    tvLogisticsCount.setText(String.valueOf(count));
+                }
+            }
+            @Override public void onCancelled(@NonNull DatabaseError error) {}
+        };
+        applicationRef.addValueEventListener(applicationListener);
     }
 
     public void filterEvents(String selectedDate) {
@@ -193,8 +226,8 @@ public class DashboardFragment extends Fragment {
     @Override
     public void onDestroyView() {
         super.onDestroyView();
-        // Remove listeners to prevent memory leaks and crashes after fragment is gone
         if (eventRef != null && eventListener != null) eventRef.removeEventListener(eventListener);
         if (paymentRef != null && paymentListener != null) paymentRef.removeEventListener(paymentListener);
+        if (applicationRef != null && applicationListener != null) applicationRef.removeEventListener(applicationListener);
     }
 }

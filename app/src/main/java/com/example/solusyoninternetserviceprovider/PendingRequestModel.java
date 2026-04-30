@@ -1,37 +1,40 @@
 package com.example.solusyoninternetserviceprovider;
 
 public class PendingRequestModel {
-    // Variables updated to match your Firebase keys exactly
-    private String name;
-    private String planType;   // Matches 'planType' in JS
-    private String referenceNo; // Matches 'referenceNo' in JS
-    private String address;
-    private String contact;    // Matches 'phone' in JS (ensure names align)
+    private String applicationId;
+    private String fullName;
+    private String phone;
+    private String plan;
+    private String barangay;
+    private String status;
+    private String uid;
 
-    // 1. CRITICAL: Empty constructor for Firebase
-    public PendingRequestModel() {
+    public PendingRequestModel() {}
+
+    public PendingRequestModel(String applicationId, String fullName, String phone, String plan, String barangay, String status, String uid) {
+        this.applicationId = applicationId;
+        this.fullName = fullName;
+        this.phone = phone;
+        this.plan = plan;
+        this.barangay = barangay;
+        this.status = status;
+        this.uid = uid;
     }
 
-    // 2. Main constructor for manual use
-    public PendingRequestModel(String name, String planType, String referenceNo, String address, String contact) {
-        this.name = name;
-        this.planType = planType;
-        this.referenceNo = referenceNo;
-        this.address = address;
-        this.contact = contact;
-    }
+    public String getApplicationId() { return applicationId; }
+    public String getFullName() { return fullName; }
+    public String getPhone() { return phone; }
+    public String getPlan() { return plan; }
+    public String getBarangay() { return barangay; }
+    public String getStatus() { return status; }
+    public String getUid() { return uid; }
 
-    // 3. Getters (Firebase needs these to read data)
-    public String getName() { return name; }
-    public String getPlanType() { return planType; }
-    public String getReferenceNo() { return referenceNo; }
-    public String getAddress() { return address; }
-    public String getContact() { return contact; }
-
-    // 4. Setters (Firebase needs these to write data into the object)
-    public void setName(String name) { this.name = name; }
-    public void setPlanType(String planType) { this.planType = planType; }
-    public void setReferenceNo(String referenceNo) { this.referenceNo = referenceNo; }
-    public void setAddress(String address) { this.address = address; }
-    public void setContact(String contact) { this.contact = contact; }
+    // Add Setters if needed for Firebase
+    public void setApplicationId(String applicationId) { this.applicationId = applicationId; }
+    public void setFullName(String fullName) { this.fullName = fullName; }
+    public void setPhone(String phone) { this.phone = phone; }
+    public void setPlan(String plan) { this.plan = plan; }
+    public void setBarangay(String barangay) { this.barangay = barangay; }
+    public void setStatus(String status) { this.status = status; }
+    public void setUid(String uid) { this.uid = uid; }
 }
