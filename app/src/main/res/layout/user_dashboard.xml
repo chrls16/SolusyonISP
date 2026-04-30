@@ -259,7 +259,8 @@
             android:layout_height="60dp"
             android:layout_marginTop="4dp"
             android:background="@drawable/bg_input_field"
-            android:paddingHorizontal="12dp" />
+            android:paddingHorizontal="12dp"
+            android:hint="Barangay"/>
 
         <LinearLayout
             android:layout_width="match_parent"
@@ -496,6 +497,7 @@
             android:columnCount="2">
 
             <com.google.android.material.card.MaterialCardView
+                android:id="@+id/payGcash"
                 android:layout_width="0dp"
                 android:layout_height="100dp"
                 android:layout_margin="4dp"
@@ -511,10 +513,10 @@
                     android:orientation="vertical">
 
                     <ImageView
-                        android:layout_width="24dp"
+                        android:layout_width="60dp"
                         android:layout_height="24dp"
                         android:src="@drawable/ic_gcash"
-                        app:tint="#2D62B5" />
+                        android:scaleType="fitCenter" />
 
                     <TextView
                         android:layout_width="wrap_content"
@@ -527,6 +529,7 @@
             </com.google.android.material.card.MaterialCardView>
 
             <com.google.android.material.card.MaterialCardView
+                android:id="@+id/payMaya"
                 android:layout_width="0dp"
                 android:layout_height="100dp"
                 android:layout_margin="4dp"
@@ -558,6 +561,7 @@
             </com.google.android.material.card.MaterialCardView>
 
             <com.google.android.material.card.MaterialCardView
+                android:id="@+id/payBank"
                 android:layout_width="0dp"
                 android:layout_height="100dp"
                 android:layout_margin="4dp"
@@ -589,6 +593,7 @@
             </com.google.android.material.card.MaterialCardView>
 
             <com.google.android.material.card.MaterialCardView
+                android:id="@+id/payCash"
                 android:layout_width="0dp"
                 android:layout_height="100dp"
                 android:layout_margin="4dp"

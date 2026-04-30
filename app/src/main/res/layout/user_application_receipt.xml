@@ -207,8 +207,23 @@
                     android:layout_height="wrap_content"
                     android:orientation="vertical"
                     android:layout_marginStart="12dp">
-                    <TextView android:id="@+id/tvPaymentName" android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="GCash" android:textStyle="bold" />
-                    <TextView android:id="@+id/tvPaymentDetail" android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="Wallet ID: 0917****123" android:textSize="12sp" />
+
+                    <TextView
+                        android:id="@+id/tvPaymentName"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="GCash"
+                        android:textStyle="bold"
+                        android:textColor="#0F172A" />
+
+                    <TextView
+                        android:id="@+id/tvPaymentDetail"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="Wallet ID: 0917****123"
+                        android:textSize="12sp"
+                        android:textColor="#64748B" />
+
                 </LinearLayout>
             </LinearLayout>
 

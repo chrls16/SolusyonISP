@@ -87,14 +87,14 @@ public class LoginFragment extends Fragment {
     }
 
     private void handleLogin() {
-        String email = etUsername.getText() != null ? etUsername.getText().toString().trim() : "";
+        String input = etUsername.getText() != null ? etUsername.getText().toString().trim() : "";
         String password = etPassword.getText() != null ? etPassword.getText().toString().trim() : "";
         boolean isTrusted = cbTrustDevice.isChecked();
 
         viewSuccess.setVisibility(View.GONE);
         viewError.setVisibility(View.GONE);
 
-        if (email.isEmpty() || password.isEmpty()) {
+        if (input.isEmpty() || password.isEmpty()) {
             viewError.setVisibility(View.VISIBLE);
             return;
         }
@@ -102,16 +102,56 @@ public class LoginFragment extends Fragment {
         btnLogin.setEnabled(false);
         btnLogin.setText("Verifying...");
 
-        // 1. Firebase Authentication
+        // Check if input is an Email or a Username
+        if (input.contains("@")) {
+            // It's an Email - Login directly
+            performFirebaseLogin(input, password, isTrusted);
+        } else {
+            // It's a Username - Look up the email in the database first
+            lookupEmailByUsername(input, password, isTrusted);
+        }
+    }
+
+    private void lookupEmailByUsername(String username, String password, boolean isTrusted) {
+        // Search the "users" node for a child where "username" matches the input
+        mDatabase.child("users").orderByChild("username").equalTo(username)
+                .addListenerForSingleValueEvent(new ValueEventListener() {
+                    @Override
+                    public void onDataChange(@NonNull DataSnapshot snapshot) {
+                        if (snapshot.exists() && snapshot.getChildrenCount() > 0) {
+                            // Username found! Get the email associated with it
+                            String email = "";
+                            for (DataSnapshot child : snapshot.getChildren()) {
+                                email = child.child("email").getValue(String.class);
+                            }
+
+                            if (email != null && !email.isEmpty()) {
+                                performFirebaseLogin(email, password, isTrusted);
+                            }
+                        } else {
+                            // Username doesn't exist
+                            btnLogin.setEnabled(true);
+                            btnLogin.setText("Sign in to Dashboard");
+                            viewError.setVisibility(View.VISIBLE);
+                            Toast.makeText(getContext(), "Username not found", Toast.LENGTH_SHORT).show();
+                        }
+                    }
+
+                    @Override
+                    public void onCancelled(@NonNull DatabaseError error) {
+                        btnLogin.setEnabled(true);
+                        Toast.makeText(getContext(), "Database Error", Toast.LENGTH_SHORT).show();
+                    }
+                });
+    }
+
+    private void performFirebaseLogin(String email, String password, boolean isTrusted) {
         mAuth.signInWithEmailAndPassword(email, password)
                 .addOnCompleteListener(requireActivity(), task -> {
                     if (task.isSuccessful()) {
                         FirebaseUser user = mAuth.getCurrentUser();
                         if (user != null) {
-                            // Save credentials if "Remember Me" is checked
                             saveLoginPrefs(email, password, isTrusted);
-
-                            // 2. Check Role and Redirect
                             checkUserRole(user.getUid());
                         }
                     } else {
