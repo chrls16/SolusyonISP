@@ -17,10 +17,8 @@ import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 
 import java.util.Calendar;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
-import java.util.Map;
 
 public class PendingRequestAdapter extends RecyclerView.Adapter<PendingRequestAdapter.ViewHolder> {
 
@@ -97,12 +95,13 @@ public class PendingRequestAdapter extends RecyclerView.Adapter<PendingRequestAd
 
         DatabaseReference db = FirebaseDatabase.getInstance(DB_URL).getReference();
 
-        // 1. Create the Installation Event
+        // 1. Create the Installation Event with the user's UID
         EventSchedule newEvent = new EventSchedule(
                 "Installation: " + request.getFullName(),
                 request.getBarangay(),
                 time,
-                date
+                date,
+                request.getUid() // Pass the UID to the event so "DONE" button knows who it is
         );
 
         // 2. Push to EventSchedule

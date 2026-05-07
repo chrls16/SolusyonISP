@@ -195,25 +195,24 @@ public class LoginFragment extends Fragment {
     }
 
     private void checkApplicationStatus(String uid) {
-        // Look into the ServiceApplications node
         mDatabase.child("ServiceApplications").child(uid).addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot snapshot) {
                 if (snapshot.exists()) {
                     String status = snapshot.child("status").getValue(String.class);
 
-                    // Only let them into the Dashboard if the status is exactly "approved"
-                    if ("approved".equalsIgnoreCase(status)) {
-                        navigateToFragment(new UserDashboardFragment(), false);
-                    } else {
-                        // PENDING OR DENIED: Show the Digital Receipt Activity
+                    // 1. IF STATUS IS COMPLETED OR APPROVED: Show the Billing/Dashboard
+                    if ("completed".equalsIgnoreCase(status) || "approved".equalsIgnoreCase(status)) {
+                        // This takes the user to their active account view
+                        navigateToFragment(new UserBillingFragment(), false);
+                    }
+                    // 2. IF STATUS IS STILL PENDING: Show the Digital Receipt
+                    else {
                         viewSuccess.setVisibility(View.VISIBLE);
-
                         new Handler(Looper.getMainLooper()).postDelayed(() -> {
                             if (isAdded()) {
                                 Intent intent = new Intent(getActivity(), UserApplicationReceiptActivity.class);
-
-                                // Pass the application data stored in Firebase to the Receipt
+                                // Pass database values to the intent
                                 intent.putExtra("appId", snapshot.child("applicationId").getValue(String.class));
                                 intent.putExtra("date", snapshot.child("date").getValue(String.class));
                                 intent.putExtra("fullName", snapshot.child("fullName").getValue(String.class));
@@ -227,7 +226,7 @@ public class LoginFragment extends Fragment {
                         }, 800);
                     }
                 } else {
-                    // NO APPLICATION FILED YET: Go to form (UserDashboardFragment)
+                    // NO APPLICATION FOUND: Take them to the application form
                     navigateToFragment(new UserDashboardFragment(), false);
                 }
             }

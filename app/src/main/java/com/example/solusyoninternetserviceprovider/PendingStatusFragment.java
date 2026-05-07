@@ -34,7 +34,6 @@ public class PendingStatusFragment extends Fragment {
 
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-        // Safe layout inflation
         return inflater.inflate(R.layout.pending_status, container, false);
     }
 
@@ -42,18 +41,12 @@ public class PendingStatusFragment extends Fragment {
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
 
-        // 1. Setup UI Components with Null Checks
+        // 1. Setup UI Components
         rvPendingRequests = view.findViewById(R.id.rvPendingRequests);
         ImageView btnBack = view.findViewById(R.id.id_btnBack);
 
-        if (rvPendingRequests == null) {
-            Log.e("CRASH_FIX", "RecyclerView NOT FOUND! Check R.id.rvPendingRequests in XML");
-            return;
-        }
-
-        // 2. Hide Bottom Nav
-        View bottomNav = requireActivity().findViewById(R.id.bottomNavigation);
-        if (bottomNav != null) bottomNav.setVisibility(View.GONE);
+        // 2. Hide Bottom Nav while viewing pending requests
+        toggleBottomNav(false);
 
         // 3. Back Button
         if (btnBack != null) {
@@ -66,7 +59,7 @@ public class PendingStatusFragment extends Fragment {
         adapter = new PendingRequestAdapter(requestList, requireContext());
         rvPendingRequests.setAdapter(adapter);
 
-        // 5. Firebase initialization - Corrected node to "ServiceApplications"
+        // 5. Firebase initialization
         try {
             pendingRef = FirebaseDatabase.getInstance("https://solusyon-isp-default-rtdb.asia-southeast1.firebasedatabase.app/")
                     .getReference("ServiceApplications");
@@ -80,28 +73,20 @@ public class PendingStatusFragment extends Fragment {
         pendingRef.addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot snapshot) {
-                requestList.clear(); // Clear the old data
+                requestList.clear();
                 if (snapshot.exists()) {
                     for (DataSnapshot ds : snapshot.getChildren()) {
                         PendingRequestModel request = ds.getValue(PendingRequestModel.class);
                         if (request != null) {
-                            // Important: Get the key (UID) from the database child
-                            request.setUid(ds.getKey());
-
-                            // Only add to the list if the status is exactly "pending"
+                            request.setUid(ds.getKey()); // Essential for approval logic
                             if ("pending".equalsIgnoreCase(request.getStatus())) {
                                 requestList.add(request);
                             }
                         }
                     }
-
-                    // Refresh the RecyclerView
-                    if (adapter != null) {
-                        adapter.notifyDataSetChanged();
-                    }
+                    if (adapter != null) adapter.notifyDataSetChanged();
                 }
 
-                // Show a message if no records match "pending"
                 if (requestList.isEmpty() && isAdded()) {
                     Toast.makeText(getContext(), "No pending setups available", Toast.LENGTH_SHORT).show();
                 }
@@ -109,10 +94,24 @@ public class PendingStatusFragment extends Fragment {
 
             @Override
             public void onCancelled(@NonNull DatabaseError error) {
-                if (isAdded()) {
-                    Log.e("DATABASE_ERROR", error.getMessage());
-                }
+                if (isAdded()) Log.e("DATABASE_ERROR", error.getMessage());
             }
         });
+    }
+
+    @Override
+    public void onDestroyView() {
+        super.onDestroyView();
+        // FIX: Ensure Bottom Navigation is visible again when returning to the previous screen
+        toggleBottomNav(true);
+    }
+
+    private void toggleBottomNav(boolean show) {
+        if (getActivity() != null) {
+            View bottomNav = getActivity().findViewById(R.id.bottomNavigation);
+            if (bottomNav != null) {
+                bottomNav.setVisibility(show ? View.VISIBLE : View.GONE);
+            }
+        }
     }
 }

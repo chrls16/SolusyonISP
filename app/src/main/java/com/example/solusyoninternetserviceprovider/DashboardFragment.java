@@ -197,7 +197,10 @@ public class DashboardFragment extends Fragment {
                 eventList.clear();
                 for (DataSnapshot ds : snapshot.getChildren()) {
                     EventSchedule event = ds.getValue(EventSchedule.class);
-                    if (event != null) eventList.add(event);
+                    if (event != null) {
+                        event.setKey(ds.getKey()); // Store the Firebase key
+                        eventList.add(event);
+                    }
                 }
                 setupCalendarGrid();
             }

@@ -37,6 +37,10 @@ public class SubscriberManagement extends Fragment {
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
 
+        if (getActivity() instanceof MainActivity) {
+            ((MainActivity) getActivity()).toggleSystemUI(true);
+        }
+
         // 1. Initialize Views
         tvPendingValue = view.findViewById(R.id.tvPendingValue);
         tvTotalConValue = view.findViewById(R.id.tvTotalConValue);

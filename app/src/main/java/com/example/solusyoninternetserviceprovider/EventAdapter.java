@@ -4,29 +4,32 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.core.content.ContextCompat;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.google.android.material.button.MaterialButton;
 import com.google.android.material.card.MaterialCardView;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
 
 import java.util.List;
 
 public class EventAdapter extends RecyclerView.Adapter<EventAdapter.EventViewHolder> {
 
     private List<EventSchedule> eventList;
+    private final String DB_URL = "https://solusyon-isp-default-rtdb.asia-southeast1.firebasedatabase.app";
 
     public EventAdapter(List<EventSchedule> eventList) {
         this.eventList = eventList;
     }
 
-    // --- NEW METHOD: UPDATE LIST FOR FILTERING ---
     public void updateList(List<EventSchedule> newList) {
         this.eventList = newList;
         notifyDataSetChanged();
     }
-    // ---------------------------------------------
 
     @NonNull
     @Override
@@ -39,13 +42,11 @@ public class EventAdapter extends RecyclerView.Adapter<EventAdapter.EventViewHol
     public void onBindViewHolder(@NonNull EventViewHolder holder, int position) {
         EventSchedule event = eventList.get(position);
 
-        // Safety check for null event data
         if (event == null) return;
 
         holder.tvEventType.setText(event.getEventType());
         holder.tvEventTitle.setText(event.getAddress());
 
-        // COMBINE DATE AND TIME
         String eventDate = event.getDate() != null ? event.getDate() : "No Date";
         String eventTime = event.getTime() != null ? event.getTime() : "No Time";
         holder.tvEventTime.setText(eventDate + " • " + eventTime);
@@ -62,6 +63,25 @@ public class EventAdapter extends RecyclerView.Adapter<EventAdapter.EventViewHol
             holder.dotIndicator.setCardBackgroundColor(ContextCompat.getColor(holder.itemView.getContext(), R.color.event_text_maint));
             holder.tvEventType.setTextColor(ContextCompat.getColor(holder.itemView.getContext(), R.color.event_text_maint));
         }
+
+        // --- DONE BUTTON LOGIC ---
+        holder.btnDone.setOnClickListener(v -> {
+            String key = event.getKey();
+            String uid = event.getUserUid(); // Get the subscriber's ID
+
+            if (key != null) {
+                DatabaseReference db = FirebaseDatabase.getInstance(DB_URL).getReference();
+
+                // 1. Mark user as fully installed in ServiceApplications
+                if (uid != null) {
+                    db.child("ServiceApplications").child(uid).child("status").setValue("completed");
+                }
+
+                // 2. Remove the event from schedule
+                db.child("EventSchedule").child("Upcoming").child(key).removeValue()
+                        .addOnSuccessListener(aVoid -> Toast.makeText(v.getContext(), "Installation Completed!", Toast.LENGTH_SHORT).show());
+            }
+        });
     }
 
     @Override
@@ -72,6 +92,7 @@ public class EventAdapter extends RecyclerView.Adapter<EventAdapter.EventViewHol
     public static class EventViewHolder extends RecyclerView.ViewHolder {
         MaterialCardView cardEventContainer, dotIndicator;
         TextView tvEventType, tvEventTitle, tvEventTime;
+        MaterialButton btnDone;
 
         public EventViewHolder(@NonNull View itemView) {
             super(itemView);
@@ -80,6 +101,7 @@ public class EventAdapter extends RecyclerView.Adapter<EventAdapter.EventViewHol
             tvEventType = itemView.findViewById(R.id.tvEventType);
             tvEventTitle = itemView.findViewById(R.id.tvEventTitle);
             tvEventTime = itemView.findViewById(R.id.tvEventTime);
+            btnDone = itemView.findViewById(R.id.btnDone);
         }
     }
 }

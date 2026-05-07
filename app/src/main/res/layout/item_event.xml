@@ -13,21 +13,23 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:orientation="horizontal"
-        android:padding="16dp">
+        android:padding="16dp"
+        android:gravity="center_vertical">
 
         <com.google.android.material.card.MaterialCardView
             android:id="@+id/dotIndicator"
             android:layout_width="8dp"
             android:layout_height="8dp"
-            android:layout_marginTop="4dp"
             app:cardCornerRadius="4dp"
             app:cardElevation="0dp"
             app:strokeWidth="0dp"/>
 
+        <!-- FIXED: Changed width to 0dp and added layout_weight="1" -->
         <LinearLayout
-            android:layout_width="match_parent"
+            android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_marginStart="12dp"
+            android:layout_weight="1"
             android:orientation="vertical">
 
             <TextView
@@ -54,5 +56,15 @@
                 android:textColor="@color/neutral"
                 android:textSize="12sp" />
         </LinearLayout>
+
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/btnDone"
+            style="@style/Widget.MaterialComponents.Button.TextButton"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="DONE"
+            android:textColor="@color/primary"
+            android:textSize="12sp"
+            android:textStyle="bold" />
     </LinearLayout>
 </com.google.android.material.card.MaterialCardView>

@@ -59,9 +59,9 @@ public class UserCreateAccountActivity extends AppCompatActivity {
 
     private void setupInitialData() {
         // Mock data based on your design screenshot
-        etFullName.setText("Juan Dela Cruz");
-        etEmail.setText("juan.delacruz@email.com");
-        etPhone.setText("+63 912 345 6789");
+        etFullName.setHint("Juan Dela Cruz");
+        etEmail.setHint("juan.delacruz@email.com");
+        etPhone.setHint("+63 912 345 6789");
     }
 
     private void setupPasswordValidation() {

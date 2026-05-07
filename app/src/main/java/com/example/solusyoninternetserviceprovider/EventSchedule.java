@@ -5,27 +5,31 @@ public class EventSchedule {
     private String address;
     private String time;
     private String date;
+    private String key; // Added this field
+    private String userUid; // ADD THIS FIELD
 
-    // 1. Required empty constructor for Firebase
     public EventSchedule() {}
 
-    // 2. Full constructor
-    public EventSchedule(String eventType, String address, String time, String date) {
+    public EventSchedule(String eventType, String address, String time, String date, String userUid) {
         this.eventType = eventType;
         this.address = address;
         this.time = time;
         this.date = date;
+        this.userUid = userUid;
     }
 
-    // 3. Exact Getters the Adapters are looking for
+
     public String getEventType() { return eventType; }
     public String getAddress() { return address; }
     public String getTime() { return time; }
     public String getDate() { return date; }
+    public String getKey() { return key; } // Added getter
+    public String getUserUid() { return userUid; }
+    public void setUserUid(String userUid) { this.userUid = userUid; }
 
-    // 4. Setters
     public void setEventType(String eventType) { this.eventType = eventType; }
     public void setAddress(String address) { this.address = address; }
     public void setTime(String time) { this.time = time; }
     public void setDate(String date) { this.date = date; }
+    public void setKey(String key) { this.key = key; } // Added setter
 }
