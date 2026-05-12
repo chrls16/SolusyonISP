@@ -164,19 +164,24 @@ public class LoginFragment extends Fragment {
     }
 
     private void checkUserRole(String uid) {
-        // 1. First, check the user's role
         mDatabase.child("users").child(uid).addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot snapshot) {
                 if (snapshot.exists()) {
+                    String name = snapshot.child("fullName").getValue(String.class);
+                    if (name == null || name.isEmpty()) {
+                        name = snapshot.child("username").getValue(String.class);
+                    }
+
+                    SharedPreferences userSession = requireActivity().getSharedPreferences("UserSession", 0);
+                    userSession.edit().putString("userName", name).apply();
+
                     String role = snapshot.child("role").getValue(String.class);
                     if (role != null) role = role.toLowerCase().trim();
 
                     if ("subscriber".equals(role)) {
-                        // 2. If Subscriber, check their application status
                         checkApplicationStatus(uid);
                     } else if ("admin".equals(role)) {
-                        // 3. If Admin, go directly to Staff Dashboard
                         navigateToFragment(new DashboardFragment(), true);
                     } else {
                         navigateToFragment(new DashboardFragment(), true);
@@ -203,8 +208,15 @@ public class LoginFragment extends Fragment {
 
                     // 1. IF STATUS IS COMPLETED OR APPROVED: Show the Billing/Dashboard
                     if ("completed".equalsIgnoreCase(status) || "approved".equalsIgnoreCase(status)) {
-                        // This takes the user to their active account view
-                        navigateToFragment(new UserBillingFragment(), false);
+                        // Navigate to UserMainActivity for active accounts
+                        new Handler(Looper.getMainLooper()).postDelayed(() -> {
+                            if (isAdded()) {
+                                Intent intent = new Intent(getActivity(), UserMainActivity.class);
+                                intent.putExtra("TARGET_FRAGMENT", "BILLING");
+                                startActivity(intent);
+                                if (getActivity() != null) getActivity().finish();
+                            }
+                        }, 800);
                     }
                     // 2. IF STATUS IS STILL PENDING: Show the Digital Receipt
                     else {
@@ -226,8 +238,15 @@ public class LoginFragment extends Fragment {
                         }, 800);
                     }
                 } else {
-                    // NO APPLICATION FOUND: Take them to the application form
-                    navigateToFragment(new UserDashboardFragment(), false);
+                    // NO APPLICATION FOUND: Take them to the UserMainActivity with Dashboard
+                    new Handler(Looper.getMainLooper()).postDelayed(() -> {
+                        if (isAdded()) {
+                            Intent intent = new Intent(getActivity(), UserMainActivity.class);
+                            intent.putExtra("TARGET_FRAGMENT", "DASHBOARD");
+                            startActivity(intent);
+                            if (getActivity() != null) getActivity().finish();
+                        }
+                    }, 800);
                 }
             }
 
@@ -242,6 +261,9 @@ public class LoginFragment extends Fragment {
         new Handler(Looper.getMainLooper()).postDelayed(() -> {
             if (isAdded()) {
                 toggleSystemUI(showAdminUI);
+                if (getActivity() instanceof MainActivity) {
+                    ((MainActivity) getActivity()).syncWelcomeHeader();
+                }
                 FragmentTransaction transaction = requireActivity().getSupportFragmentManager().beginTransaction();
                 transaction.setCustomAnimations(android.R.anim.fade_in, android.R.anim.fade_out);
                 transaction.replace(R.id.fragment_container, fragment);

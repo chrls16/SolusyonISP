@@ -47,6 +47,10 @@
             android:name=".PendingStatusActivity"
             android:exported="false" />
 
+        <activity
+            android:name=".UserMainActivity"
+            android:exported="false" />
+
 
     </application>
 
